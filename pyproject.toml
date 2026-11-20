@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "roadvision"
+version = "0.1.0"
+description = "RoadVision AI - synthetic visual reasoning benchmark for road-pavement defects"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "RoadVision AI" }]
+dependencies = [
+  "numpy==2.5.2",
+  "pillow==12.2.0",
+  "opencv-python-headless==4.13.0.92",
+  "pydantic==2.14.2",
+  "PyYAML==6.0.3",
+  "pandas==3.1.1",
+  "matplotlib==3.11.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.2"]
+demo = ["streamlit==1.67.0"]
+
+[project.scripts]
+roadvision = "roadvision.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+  "slow: tests that render multiple images",
+]
+
+[tool.setuptools.package-data]
+roadvision = ["py.typed"]

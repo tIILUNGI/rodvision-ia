@@ -1,0 +1,14 @@
+# Harbor Task Definition
+schema_version = "1.4"
+title = "RoadVision AI - Counting"
+description = "Evaluate multimodal visual reasoning on road pavement defects."
+
+[metadata]
+task_id = "RV_010452_56ac55_q01"
+capability = "counting"
+difficulty = "easy"
+answer_format = "integer"
+
+[environment]
+dockerfile = "Dockerfile"
+timeout_sec = 60

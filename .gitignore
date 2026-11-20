@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.venv-*/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Generated benchmark artefacts
+datasets/generated/*
+datasets/annotations/*
+datasets/tasks/*
+datasets/splits/*
+datasets/manifests/*
+!datasets/**/.gitkeep
+
+benchmarks/harbor/*
+!benchmarks/.gitkeep
+
+reports/*
+!reports/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local scratch
+scratch/
+datasets_cli_check/
+*.log

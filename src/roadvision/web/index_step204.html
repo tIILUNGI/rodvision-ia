@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoadVision AI — Enterprise Road Infrastructure Intelligence</title>
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Segoe UI"', '"Plus Jakarta Sans"', 'Noto Sans Devanagari', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+          colors: {
+            ms: {
+              blue: '#0078d4',
+              blueDark: '#106ebe',
+              blueLight: '#deecf9',
+              sidebar: '#f3f2f1',
+              sidebarHover: '#edebe9',
+              activeBorder: '#0078d4',
+              border: '#e1dfdd',
+              text: '#323130',
+              textSecondary: '#605e5c',
+              bg: '#faf9f8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #faf9f8; color: #323130; font-family: 'Segoe UI', sans-serif; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f3f2f1; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #c8c6c4; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col custom-scroll">
+
+  <!-- ================= TOP GLOBAL APP BAR ================= -->
+  <header class="sticky top-0 z-50 bg-white border-b border-ms-border px-5 py-2.5 flex items-center justify-between shadow-2xs">
+    <div class="flex items-center space-x-3 cursor-pointer" onclick="showView('landing')">
+      <div class="w-8 h-8 rounded bg-ms-blue text-white flex items-center justify-center font-bold text-base shadow-xs">
+        <i class="fa-solid fa-road"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="font-bold text-base text-ms-text tracking-tight">RoadVision <span class="text-ms-blue">AI</span></span>
+          <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-ms-blueLight text-ms-blueDark">Enterprise Infrastructure</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LANGUAGE & AUTH CONTROLS -->
+    <div class="flex items-center space-x-3">
+      <!-- 3 LANGUAGES SWITCHER (PT, EN, HI) -->
+      <div class="flex items-center bg-ms-sidebar border border-ms-border p-0.5 rounded text-xs font-semibold">
+        <button onclick="setLanguage('pt')" id="lang-pt" class="px-2.5 py-1 rounded transition bg-white text-ms-text shadow-xs font-bold">PT</button>
+        <button onclick="setLanguage('en')" id="lang-en" class="px-2.5 py-1 rounded transition text-ms-textSecondary hover:text-ms-text">EN</button>
+        <button onclick="setLanguage('hi')" id="lang-hi" class="px-2.5 py-1 rounded transition text-ms-textSecondary hover:text-ms-text font-sans" title="Hindi (हिंदी)">हिन्दी</button>
+      </div>
+
+      <!-- PUBLIC ACCESS BUTTON (When outside) -->
+      <div id="publicHeaderBtn">
+        <button onclick="showView('login')" class="px-4 py-1.5 rounded text-xs font-semibold bg-ms-blue text-white hover:bg-ms-blueDark transition flex items-center space-x-1.5 shadow-2xs">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span data-i18n="btn_enter_system">Entrar no Sistema</span>
+        </button>
+      </div>
+
+      <!-- LOGGED USER PROFILE BADGE -->
+      <div id="userHeaderBadge" class="hidden items-center space-x-2">
+        <button onclick="showWorkspaceModule('profile')" class="flex items-center space-x-2 hover:bg-ms-sidebar p-1.5 rounded transition">
+          <div class="w-7 h-7 rounded-full bg-ms-blue text-white flex items-center justify-center text-xs font-bold font-mono" id="avatarInitial">P</div>
+          <div class="text-left hidden sm:block">
+            <p class="text-xs font-bold text-ms-text leading-none" id="headerUserName">Pesquisador</p>
+            <span class="text-[10px] text-ms-textSecondary font-mono" id="headerUserEmail">lead@roadvision.ai</span>
+          </div>
+        </button>
+        <button onclick="logout()" class="px-2 py-1 text-ms-textSecondary hover:text-red-600 rounded text-xs transition" title="Encerrar Sessão">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= VIEW 1: COMPLETE PUBLIC LANDING PAGE ================= -->
+  <div id="view-landing" class="view-panel w-full">
+    <!-- HERO -->
+    <section class="bg-white border-b border-ms-border py-16 md:py-20">
+      <div class="max-w-5xl mx-auto px-6 text-center space-y-5">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-ms-sidebar border border-ms-border text-ms-textSecondary text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-ms-blue"></span>
+          <span data-i18n="hero_pill">Road Pavement Synthetic Reasoning Platform</span>
+        </div>
+
+        <h1 class="text-3xl md:text-5xl font-extrabold text-ms-text tracking-tight leading-tight" data-i18n="landing_title">
+          Fábrica Automatizada de Tarefas Visuais e Avaliação Científica de Rodovias
+        </h1>
+
+        <p class="text-base text-ms-textSecondary max-w-3xl mx-auto leading-relaxed" data-i18n="landing_subtitle">
+          Uma plataforma de engenharia de IA que gera cenários rodoviários sintéticos com física controlada, anotações de Ground Truth extraídas diretamente de máscaras de pixels e verificação determinística rigorosa sem juízes LLM.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
+          <button onclick="showView('login')" class="px-6 py-2.5 rounded text-sm font-bold bg-ms-blue hover:bg-ms-blueDark text-white shadow-xs transition flex items-center space-x-2">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span data-i18n="btn_enter_system">Entrar no Sistema</span>
+          </button>
+          <button onclick="directAccessDemo()" class="px-6 py-2.5 rounded text-sm font-semibold bg-ms-sidebar hover:bg-ms-sidebarHover text-ms-text border border-ms-border transition flex items-center space-x-2">
+            <i class="fa-solid fa-flask text-ms-blue"></i>
+            <span data-i18n="btn_instant_demo">Acesso Imediato ao Laboratório</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHAT THE SYSTEM DOES (CLEAR OVERVIEW) -->
+    <section class="py-14 max-w-6xl mx-auto px-6 space-y-10">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl font-bold text-ms-text" data-i18n="how_it_works_title">Como Funciona o RoadVision AI?</h2>
+        <p class="text-xs text-ms-textSecondary max-w-2xl mx-auto" data-i18n="how_it_works_desc">Fluxo automatizado em 6 fases de ponta a ponta sem intervenção manual.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+          <div class="w-9 h-9 rounded bg-ms-blueLight text-ms-blue flex items-center justify-center font-bold text-sm">1</div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="step1_title">Geração Procedural 2D/3D</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="step1_desc">Texturas realistas de asfalto multi-octave, condições climáticas (seco, húmido, molhado com poças d'água), sombras solares e detritos oclusores.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+          <div class="w-9 h-9 rounded bg-ms-blueLight text-ms-blue flex items-center justify-center font-bold text-sm">2</div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="step2_title">Ground Truth dos Pixels</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="step2_desc">Bounding boxes, áreas em pixels, centróides e frações de visibilidade calculados diretamente das máscaras reais da imagem, sem inferência de IA.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+          <div class="w-9 h-9 rounded bg-ms-blueLight text-ms-blue flex items-center justify-center font-bold text-sm">3</div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="step3_title">Question Factory & Tarefas</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="step3_desc">Perguntas geradas em 7 capacidades (Contagem, Localização, Classificação, Relação Espacial, Comparação de Área, Oclusão e Abstenção).</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+          <div class="w-9 h-9 rounded bg-ms-blueLight text-ms-blue flex items-center justify-center font-bold text-sm">4</div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="step4_title">Agente de IA Multimodal</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="step4_desc">Módulo autônomo integrado onde faz upload de qualquer imagem rodoviária para análise e diagnóstico estrutural interativo.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+          <div class="w-9 h-9 rounded bg-ms-blueLight text-ms-blue flex items-center justify-center font-bold text-sm">5</div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="step5_title">Validação Determinística</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="step5_desc">Zero julgamento por outros LLMs. Cálculo exato de Intersection over Union (IoU), exatidão e controle rigoroso de abstenção honesta.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+          <div class="w-9 h-9 rounded bg-ms-blueLight text-ms-blue flex items-center justify-center font-bold text-sm">6</div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="step6_title">Exportação Harbor 1.4</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="step6_desc">Empacotamento automático de datasets no padrão oficial de tarefas com task.toml, instruction.md e testes automáticos de graduação.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-ms-border py-8 text-xs text-ms-textSecondary text-center">
+      <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-3">
+        <p>RoadVision AI — Plataforma de Pesquisa em Visão Computacional e Infraestrutura.</p>
+        <div class="flex space-x-4">
+          <button onclick="showView('login')" class="text-ms-blue hover:underline">Iniciar Sessão</button>
+          <span>•</span>
+          <button onclick="directAccessDemo()" class="text-ms-blue hover:underline">Laboratório de Demonstração</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ================= VIEW 2: DEDICATED LOGIN / REGISTER SCREEN (Com imagem de lado) ================= -->
+  <div id="view-login" class="view-panel hidden flex-1 flex items-center justify-center p-4 md:p-8 bg-ms-bg">
+    <div class="max-w-4xl w-full bg-white rounded-xl border border-ms-border shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-2 min-h-[520px]">
+      
+      <!-- LEFT SIDE: REAL INFRASTRUCTURE IMAGE & CONTEXT -->
+      <div class="relative bg-slate-900 text-white p-8 flex flex-col justify-between overflow-hidden">
+        <div class="absolute inset-0 opacity-40 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop');"></div>
+        <div class="relative z-10 space-y-2">
+          <span class="text-xs font-mono font-bold text-sky-400 tracking-wider uppercase">RoadVision Workstation</span>
+          <h3 class="text-xl font-bold leading-tight" data-i18n="login_side_title">Ambiente de Pesquisa de Pavimentos Rodoviários</h3>
+          <p class="text-xs text-slate-300 leading-relaxed font-light" data-i18n="login_side_desc">
+            Aceda ao ambiente fechado de simulação visual, análise de Ground Truth e execução do agente neural de diagnóstico.
+          </p>
+        </div>
+
+        <div class="relative z-10 pt-6 border-t border-slate-700/80 text-[11px] text-slate-400 flex items-center justify-between">
+          <span>Versão da Plataforma: 1.0.0</span>
+          <span>Harbor 1.4 Native</span>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: CLEAN CORPORATE LOGIN FORM -->
+      <div class="p-8 flex flex-col justify-center space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3">
+          <h2 class="text-lg font-bold text-ms-text" id="authTitle" data-i18n="auth_login_title">Entrar na Plataforma</h2>
+          <button onclick="showView('landing')" class="text-xs text-ms-textSecondary hover:text-ms-text flex items-center space-x-1">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span data-i18n="btn_back_home">Voltar</span>
+          </button>
+        </div>
+
+        <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4 text-xs">
+          <div id="registerFieldGroup" class="hidden space-y-3">
+            <div>
+              <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_name">Nome Completo</label>
+              <input type="text" id="inputName" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_org">Instituição de Pesquisa / Departamento</label>
+              <input type="text" id="inputOrg" value="Laboratório de Engenharia de Transportes" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_email">E-mail Institucional</label>
+            <input type="email" id="inputEmail" value="lead@roadvision.ai" required class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_password">Palavra-passe</label>
+            <input type="password" id="inputPassword" value="RoadVision2026!" required class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+          </div>
+
+          <div class="pt-1">
+            <button type="submit" id="btnSubmitAuth" class="w-full py-2.5 rounded font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition shadow-2xs" data-i18n="btn_enter">
+              Entrar
+            </button>
+          </div>
+        </form>
+
+        <div class="pt-3 border-t border-ms-border flex items-center justify-between text-xs text-ms-textSecondary">
+          <button onclick="toggleAuthMode()" id="btnToggleAuthMode" class="text-ms-blue hover:underline font-semibold" data-i18n="link_create_account">
+            Criar conta de pesquisador
+          </button>
+          <button onclick="directAccessDemo()" class="text-ms-textSecondary hover:text-ms-text text-[11px]" data-i18n="link_demo_bypass">
+            Acesso Rápido de Teste →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= VIEW 3: INTERNAL WORKSPACE (Microsoft-style Sidebar Application) ================= -->
+  <div id="view-workspace" class="view-panel hidden flex-1 flex w-full h-[calc(100vh-53px)] overflow-hidden">
+    
+    <!-- LEFT SIDEBAR NAVIGATION (Microsoft / Azure / Office style) -->
+    <aside class="w-64 bg-ms-sidebar border-r border-ms-border flex flex-col justify-between shrink-0 select-none">
+      <div class="p-3 space-y-4">
+        <!-- WORKSPACE TITLE -->
+        <div class="px-3 py-2 border-b border-ms-border">
+          <p class="text-[11px] font-bold text-ms-textSecondary uppercase tracking-wider" data-i18n="sidebar_section">Módulos do Sistema</p>
+          <h2 class="text-xs font-bold text-ms-text">RoadVision Workstation</h2>
+        </div>
+
+        <!-- NAVIGATION ITEMS (Menu Lateral) -->
+        <nav class="space-y-1 text-xs font-semibold">
+          <button onclick="showWorkspaceModule('agent')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="agent">
+            <i class="fa-solid fa-robot w-4 text-ms-blue"></i>
+            <span data-i18n="mod_agent">Agente Neural Multimodal</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('studio')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left active-sidebar" data-mod="studio">
+            <i class="fa-solid fa-wand-magic-sparkles w-4 text-sky-600"></i>
+            <span data-i18n="mod_studio">Studio de Geração</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('audit')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="audit">
+            <i class="fa-solid fa-microscope w-4 text-emerald-600"></i>
+            <span data-i18n="mod_audit">Auditoria Ground Truth</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('arena')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="arena">
+            <i class="fa-solid fa-bolt w-4 text-amber-600"></i>
+            <span data-i18n="mod_arena">Validation Arena</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('leaderboard')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="leaderboard">
+            <i class="fa-solid fa-chart-line w-4 text-purple-600"></i>
+            <span data-i18n="mod_leaderboard">Benchmark & Ranking</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('harbor')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="harbor">
+            <i class="fa-solid fa-anchor w-4 text-slate-700"></i>
+            <span data-i18n="mod_harbor">Harbor Export Hub</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('profile')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="profile">
+            <i class="fa-solid fa-user-gear w-4 text-slate-600"></i>
+            <span data-i18n="mod_profile">Perfil do Pesquisador</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- FOOTER SIDEBAR -->
+      <div class="p-3 border-t border-ms-border space-y-2 text-xs">
+        <div class="px-2 py-1 bg-white rounded border border-ms-border text-[11px] text-ms-textSecondary">
+          <p><strong class="text-ms-text">Ambiente:</strong> Produção</p>
+          <p><strong class="text-ms-text">Dataset:</strong> smoke.yaml</p>
+        </div>
+        <button onclick="logout()" class="w-full py-1.5 rounded text-xs font-semibold text-ms-textSecondary hover:bg-ms-sidebarHover hover:text-red-600 transition flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-power-off"></i>
+          <span data-i18n="btn_signout">Sair</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- RIGHT MAIN WORKSPACE CANVAS (Onde as funcionalidades aparecem) -->
+    <main class="flex-1 bg-ms-bg overflow-y-auto custom-scroll p-6">
+
+      <!-- ================= MODULE 1: AGENTE MULTIMODAL (NOVO!) ================= -->
+      <section id="module-agent" class="module-pane space-y-6">
+        <div class="border-b border-ms-border pb-3">
+          <h2 class="text-lg font-bold text-ms-text" data-i18n="agent_header_title">Agente de IA Multimodal — Diagnóstico Rodoviário</h2>
+          <p class="text-xs text-ms-textSecondary" data-i18n="agent_header_desc">Envie uma foto de qualquer rodovia ou utilize o gerador para o agente analisar defeitos, calcular severidade e recomendar manutenções.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- UPLOAD / INPUT PANEL (5 cols) -->
+          <div class="lg:col-span-5 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary" data-i18n="agent_upload_box">Carregar Foto para o Agente</h3>
+
+            <div class="space-y-3 text-xs">
+              <!-- DROPZONE -->
+              <div onclick="document.getElementById('agentFileInput').click()" class="border-2 border-dashed border-ms-border hover:border-ms-blue rounded-lg p-6 text-center cursor-pointer bg-ms-sidebar hover:bg-ms-sidebarHover transition space-y-2">
+                <i class="fa-solid fa-cloud-arrow-up text-2xl text-ms-blue"></i>
+                <p class="font-bold text-ms-text" data-i18n="agent_dropzone_text">Clique para carregar uma imagem (PNG/JPG)</p>
+                <p class="text-[11px] text-ms-textSecondary" data-i18n="agent_dropzone_sub">Ou analise a imagem gerada no laboratório</p>
+                <input type="file" id="agentFileInput" accept="image/*" class="hidden" onchange="handleAgentFileSelected(event)">
+              </div>
+
+              <div>
+                <label class="block font-semibold text-ms-text mb-1" data-i18n="agent_query_lbl">Pergunta ou Instrução de Análise:</label>
+                <textarea id="agentQueryInput" rows="3" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none" placeholder="Ex: Quantos buracos estão visíveis e qual a recomendação de reparo?"></textarea>
+              </div>
+
+              <button onclick="submitAgentAnalysis()" id="btnSubmitAgent" class="w-full py-2.5 rounded font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center justify-center space-x-1.5 shadow-2xs">
+                <i class="fa-solid fa-robot"></i>
+                <span data-i18n="btn_ask_agent">Executar Análise com o Agente</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- AGENT RESPONSE PANEL (7 cols) -->
+          <div class="lg:col-span-7 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <div class="flex items-center justify-between border-b border-ms-border pb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary" data-i18n="agent_result_title">Parecer Técnico do Agente Neural</span>
+              <span class="text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                <i class="fa-solid fa-circle-check mr-1"></i>Confidence: 94%
+              </span>
+            </div>
+
+            <!-- PREVIEW OF INSPECTED IMAGE -->
+            <div class="aspect-[16/9] w-full bg-slate-900 rounded overflow-hidden flex items-center justify-center">
+              <img id="agentPreviewImg" src="/api/studio/image/smoke/RV_010452_56ac55" class="w-full h-full object-contain" alt="Inspected Road">
+            </div>
+
+            <!-- CHAT BUBBLE OF AGENT -->
+            <div id="agentResponseCard" class="p-4 rounded-lg bg-ms-sidebar border border-ms-border space-y-3 text-xs">
+              <div class="flex items-center space-x-2 text-ms-text font-bold">
+                <i class="fa-solid fa-microchip text-ms-blue"></i>
+                <span>Diagnóstico Autônomo Estrutural</span>
+              </div>
+              <p class="text-ms-text leading-relaxed" id="agentResponseText">
+                "Análise concluída com sucesso: Identifiquei 2 defeitos na rodovia — 1 buraco (pothole) com perda de material asfáltico e 1 fissura longitudinal. Risco hídrico por infiltração detectado."
+              </p>
+              
+              <div class="border-t border-ms-border pt-2 text-[11px] text-ms-textSecondary space-y-1">
+                <p>• <strong>Recomendação Técnica:</strong> Selagem de fissura e preenchimento asfáltico com compactação mecânica.</p>
+                <p>• <strong>Urgência de Manutenção:</strong> Intervenção recomendada em 14 dias.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 2: STUDIO DE GERAÇÃO ================= -->
+      <section id="module-studio" class="module-pane hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="studio_header_title">Studio de Geração Procedural de Pavimentos</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="studio_header_desc">Configuração determinística da malha geométrica, iluminação solar, clima e defeitos.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="randomizeSeed()" class="px-3 py-1.5 rounded text-xs font-semibold bg-white border border-ms-border hover:bg-ms-sidebar text-ms-text transition">
+              <i class="fa-solid fa-dice mr-1"></i><span data-i18n="btn_rand_seed">Semente Aleatória</span>
+            </button>
+            <button onclick="triggerGenerate()" id="btnGenerate" class="px-4 py-1.5 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center space-x-1.5 shadow-2xs">
+              <i class="fa-solid fa-play"></i>
+              <span data-i18n="btn_render_scene">Renderizar Cena</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- CONTROLS -->
+          <div class="lg:col-span-4 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary" data-i18n="lbl_input_parameters">Parâmetros de Entrada</h3>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_seed">Semente RNG (Seed)</label>
+                <input type="number" id="genSeed" value="10452" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text font-mono focus:border-ms-blue focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_config">Configuração YAML</label>
+                <select id="genConfig" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none">
+                  <option value="smoke">smoke.yaml (Avaliação Rápida, 4 defeitos)</option>
+                  <option value="dev">dev.yaml (Dataset de Desenvolvimento, 32 imagens)</option>
+                  <option value="eval">eval.yaml (Benchmark Oficial de Teste)</option>
+                </select>
+              </div>
+
+              <div class="p-3 rounded bg-ms-sidebar border border-ms-border space-y-2">
+                <span class="text-[11px] font-bold text-ms-text block uppercase" data-i18n="lbl_env_status">Condições Ambientais</span>
+                <div class="flex items-center justify-between text-ms-textSecondary">
+                  <span data-i18n="lbl_weather">Clima:</span>
+                  <span class="font-mono font-bold text-ms-text" id="infoWeather">Wet (Molhado)</span>
+                </div>
+                <div class="flex items-center justify-between text-ms-textSecondary">
+                  <span data-i18n="lbl_lighting">Iluminação:</span>
+                  <span class="font-mono font-bold text-ms-text" id="infoLighting">Harsh Sun</span>
+                </div>
+                <div class="flex items-center justify-between text-ms-textSecondary">
+                  <span data-i18n="lbl_shadow">Sombras:</span>
+                  <span class="font-mono font-bold text-ms-text" id="infoShadow">Presente</span>
+                </div>
+                <div class="flex items-center justify-between text-ms-textSecondary">
+                  <span data-i18n="lbl_occluder">Oclusores:</span>
+                  <span class="font-mono font-bold text-ms-text" id="infoOccluder">Debris Sheet</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CANVAS & LAYERS -->
+          <div class="lg:col-span-8 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="text-xs font-bold text-ms-text" data-i18n="lbl_inspect_layers">Inspecionar Camadas:</span>
+              <div class="flex items-center space-x-1 bg-ms-sidebar p-0.5 rounded border border-ms-border text-xs">
+                <button onclick="setLayer('rgb')" id="btnLayerRgb" class="px-2.5 py-1 rounded font-semibold transition bg-white text-ms-text shadow-2xs" data-i18n="layer_rgb">RGB Real</button>
+                <button onclick="setLayer('instances')" id="btnLayerInstances" class="px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text" data-i18n="layer_instances">Instâncias</button>
+                <button onclick="setLayer('visible')" id="btnLayerVisible" class="px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text" data-i18n="layer_visible">Visibilidade</button>
+                <button onclick="setLayer('occluders')" id="btnLayerOccluders" class="px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text" data-i18n="layer_occluders">Oclusores</button>
+                <button onclick="toggleBoxes()" id="btnLayerBoxes" class="px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text" data-i18n="layer_boxes">📦 BBoxes</button>
+              </div>
+            </div>
+
+            <!-- CANVAS CONTAINER -->
+            <div class="relative w-full aspect-[3/2] bg-slate-950 rounded overflow-hidden border border-ms-border flex items-center justify-center">
+              <img id="mainImageDisplay" src="/api/studio/image/smoke/RV_010452_56ac55" class="w-full h-full object-contain" alt="Pavement Scene">
+              <canvas id="overlayCanvas" class="absolute inset-0 w-full h-full pointer-events-auto"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-ms-textSecondary pt-1 font-mono">
+              <div>
+                <span>ID: <strong class="text-ms-text" id="currentImageId">RV_010452_56ac55</strong></span>
+                <span class="mx-2">•</span>
+                <span>Defeitos: <strong class="text-ms-text" id="currentDefectsCount">2</strong></span>
+              </div>
+              <div>
+                <span>Tempo de Renderização: <strong class="text-ms-text" id="currentRenderTime">0.79s</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 3: AUDITORIA GROUND TRUTH ================= -->
+      <section id="module-audit" class="module-pane hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="audit_header_title">Auditoria Matemática de Ground Truth</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="audit_header_desc">Inspeção detalhada de dimensões, máscaras indexadas e validações Pydantic.</p>
+          </div>
+          <button onclick="downloadAnnotationJson()" class="px-3.5 py-1.5 rounded text-xs font-semibold bg-white border border-ms-border hover:bg-ms-sidebar text-ms-text transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-download"></i>
+            <span data-i18n="btn_export_json">Exportar JSON</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-lg border border-ms-border overflow-hidden shadow-2xs">
+          <div class="p-3 bg-ms-sidebar border-b border-ms-border flex items-center justify-between">
+            <h3 class="text-xs font-bold text-ms-text uppercase tracking-wider" data-i18n="tbl_objects_title">Tabela de Objetos & Coordenadas</h3>
+            <span class="text-xs font-mono font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <i class="fa-solid fa-check mr-1"></i>Pydantic Integrity Verified
+            </span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-ms-sidebar text-ms-textSecondary font-mono text-[11px] uppercase border-b border-ms-border">
+                <tr>
+                  <th class="p-3">ID</th>
+                  <th class="p-3" data-i18n="th_class">Classe</th>
+                  <th class="p-3">BBox Normalizada [x1, y1, x2, y2]</th>
+                  <th class="p-3" data-i18n="th_area">Área (px)</th>
+                  <th class="p-3" data-i18n="th_visible">Visível (px)</th>
+                  <th class="p-3">% Visível</th>
+                  <th class="p-3" data-i18n="th_status">Status Oclusão</th>
+                </tr>
+              </thead>
+              <tbody id="objectsTableBody" class="divide-y divide-ms-border text-ms-text font-mono"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 4: VALIDATION ARENA ================= -->
+      <section id="module-arena" class="module-pane hidden space-y-6">
+        <div class="border-b border-ms-border pb-3">
+          <h2 class="text-lg font-bold text-ms-text" data-i18n="arena_header_title">Arena de Validação Determinística</h2>
+          <p class="text-xs text-ms-textSecondary" data-i18n="arena_header_desc">Submeta respostas para testar os algoritmos de validação determinística sem juízes de IA.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white p-4 rounded-lg border border-ms-border shadow-2xs space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary flex items-center justify-between">
+              <span data-i18n="lbl_tasks_in_scene">Tarefas Geradas</span>
+              <span class="text-ms-text font-mono" id="tasksCountBadge">6 tarefas</span>
+            </h3>
+            <div id="tasksListContainer" class="space-y-2 max-h-[460px] overflow-y-auto custom-scroll pr-1"></div>
+          </div>
+
+          <div class="lg:col-span-7 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <div class="border-b border-ms-border pb-3">
+              <span class="text-[11px] font-mono font-bold text-ms-blue uppercase" id="activeTaskCap">Capability: COUNTING</span>
+              <h3 class="text-base font-bold text-ms-text mt-1" id="activeTaskPrompt">Selecione uma tarefa</h3>
+              <p class="text-xs text-ms-textSecondary mt-1" id="activeTaskHint">Formato: integer</p>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-xs font-bold text-ms-text" data-i18n="lbl_input_answer">Resposta para Verificação:</label>
+              <div class="flex items-center space-x-2">
+                <input type="text" id="userAnswerInput" placeholder="Digite o valor a validar..." class="flex-1 bg-ms-bg border border-ms-border rounded p-2 text-xs text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+                <button onclick="testValidateAnswer()" class="px-4 py-2 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center space-x-1.5">
+                  <i class="fa-solid fa-check"></i>
+                  <span data-i18n="btn_validate">Validar</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="validationResultCard" class="hidden p-3.5 rounded border text-xs space-y-1.5"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 5: LEADERBOARD ================= -->
+      <section id="module-leaderboard" class="module-pane hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="leaderboard_header_title">Benchmark & Classificação de Modelos</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="leaderboard_header_desc">Resultados comparativos no conjunto oficial de avaliação.</p>
+          </div>
+          <button onclick="runLiveEvaluation()" id="btnRunEval" class="px-4 py-2 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center space-x-1.5 shadow-2xs">
+            <i class="fa-solid fa-play"></i>
+            <span data-i18n="btn_run_eval">Executar Avaliação ao Vivo</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white p-5 rounded-lg border border-ms-border shadow-2xs flex flex-col items-center justify-center">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary mb-2" data-i18n="radar_title">Radar das 7 Capacidades</h3>
+            <div class="w-full aspect-square max-w-[320px]">
+              <canvas id="radarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 bg-white rounded-lg border border-ms-border shadow-2xs overflow-hidden">
+            <div class="p-3 bg-ms-sidebar border-b border-ms-border">
+              <h3 class="text-xs font-bold text-ms-text uppercase tracking-wider" data-i18n="ranking_table_title">Tabela Oficial de Classificação</h3>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs font-mono">
+                <thead class="bg-ms-sidebar text-ms-textSecondary text-[11px] uppercase border-b border-ms-border">
+                  <tr>
+                    <th class="p-3">Rank</th>
+                    <th class="p-3 font-sans font-bold">Modelo</th>
+                    <th class="p-3 font-bold">Acurácia</th>
+                    <th class="p-3">Contagem</th>
+                    <th class="p-3">IoU</th>
+                    <th class="p-3">Oclusão</th>
+                    <th class="p-3">Abstenção</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboardTableBody" class="divide-y divide-ms-border text-ms-text"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 6: HARBOR EXPORT HUB ================= -->
+      <section id="module-harbor" class="module-pane hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="harbor_header_title">Exportação para Harbor Framework (v1.4)</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="harbor_header_desc">Empacotamento oficial de tarefas para submissão direta no repositório da competição.</p>
+          </div>
+          <button onclick="triggerHarborExport()" id="btnHarborExport" class="px-4 py-2 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center space-x-1.5 shadow-2xs">
+            <i class="fa-solid fa-file-zipper"></i>
+            <span data-i18n="btn_gen_harbor">Empacotar Dataset (.zip)</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+            <span class="text-xs font-bold font-mono text-ms-blue">01 / task.toml</span>
+            <h4 class="font-bold text-ms-text text-sm">Contrato de Tarefa</h4>
+            <p class="text-xs text-ms-textSecondary leading-relaxed">Estrutura oficial com `schema_version = "1.4"`, timeout e mapeamento de container Docker.</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+            <span class="text-xs font-bold font-mono text-ms-blue">02 / instruction.md</span>
+            <h4 class="font-bold text-ms-text text-sm">Isolamento do Modelo</h4>
+            <p class="text-xs text-ms-textSecondary leading-relaxed">Prompt público e imagem crua sem coordenadas ou respostas para evitar qualquer data leakage.</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+            <span class="text-xs font-bold font-mono text-ms-blue">03 / tests/test.sh</span>
+            <h4 class="font-bold text-ms-text text-sm">Graduação Automática</h4>
+            <p class="text-xs text-ms-textSecondary leading-relaxed">Script executado pós-inferência que calcula o score determinístico e escreve no `/tmp/reward`.</p>
+          </div>
+        </div>
+
+        <div id="harborResultCard" class="hidden bg-emerald-50 border border-emerald-200 p-5 rounded-lg space-y-3">
+          <div class="flex items-center space-x-2 text-emerald-800 font-bold text-sm">
+            <i class="fa-solid fa-circle-check"></i>
+            <span data-i18n="harbor_success_msg">Pacote Harbor 1.4 Gerado e Validado com Sucesso!</span>
+          </div>
+          <p class="text-xs text-emerald-700" id="harborExportSummary">Tarefas empacotadas no padrão oficial.</p>
+          <a id="harborDownloadLink" href="#" class="inline-flex items-center space-x-1.5 px-4 py-2 rounded text-xs font-bold bg-emerald-700 text-white hover:bg-emerald-800 transition shadow-2xs">
+            <i class="fa-solid fa-download"></i>
+            <span data-i18n="btn_download_zip">Transferir Arquivo ZIP da Competição</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 7: PERFIL DO PESQUISADOR (NOVO!) ================= -->
+      <section id="module-profile" class="module-pane hidden space-y-6">
+        <div class="border-b border-ms-border pb-3">
+          <h2 class="text-lg font-bold text-ms-text" data-i18n="profile_header_title">Perfil do Pesquisador & Configurações da Conta</h2>
+          <p class="text-xs text-ms-textSecondary" data-i18n="profile_header_desc">Gerencie suas credenciais de pesquisa, credenciais de API para avaliação e preferências da plataforma.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- PROFILE CARD (4 cols) -->
+          <div class="lg:col-span-4 bg-white p-6 rounded-lg border border-ms-border shadow-2xs text-center space-y-4">
+            <div class="w-20 h-20 rounded-full bg-ms-blue text-white flex items-center justify-center text-3xl font-bold font-mono mx-auto shadow-xs" id="profileLargeAvatar">
+              P
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-ms-text" id="profileFullName">Lead AI Engineer</h3>
+              <p class="text-xs text-ms-textSecondary" id="profileRoleBadge">Pesquisador Titular (Admin)</p>
+            </div>
+
+            <div class="p-3 bg-ms-sidebar rounded text-left text-xs space-y-1.5">
+              <p><strong>E-mail:</strong> <span class="font-mono" id="profileEmailTxt">lead@roadvision.ai</span></p>
+              <p><strong>Instituição:</strong> <span id="profileOrgTxt">RoadVision AI Core Team</span></p>
+              <p><strong>Permissões:</strong> <span class="text-emerald-700 font-bold">Acesso Total (Nível 4)</span></p>
+            </div>
+
+            <button onclick="logout()" class="w-full py-2 rounded text-xs font-bold bg-ms-sidebar hover:bg-ms-sidebarHover text-red-600 border border-ms-border transition">
+              <i class="fa-solid fa-power-off mr-1"></i>Terminar Sessão
+            </button>
+          </div>
+
+          <!-- SETTINGS & CREDENTIALS (8 cols) -->
+          <div class="lg:col-span-8 bg-white p-6 rounded-lg border border-ms-border shadow-2xs space-y-5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary">Chaves de API para Modelos Comerciais (Opcional)</h3>
+            <p class="text-xs text-ms-textSecondary">
+              Para executar benchmarks contra modelos externos como GPT-4o ou Claude 3.5 Sonnet, configure sua chave. A chave fica apenas na sessão local.
+            </p>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block font-semibold text-ms-text mb-1">OpenAI API Key / Token:</label>
+                <input type="password" id="userApiKeyInput" placeholder="sk-..." class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+              </div>
+
+              <div>
+                <label class="block font-semibold text-ms-text mb-1">Endpoint Personalizado (vLLM / Ollama):</label>
+                <input type="text" id="userEndpointInput" placeholder="http://localhost:11434/v1" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+              </div>
+
+              <button onclick="saveApiSettings()" class="px-4 py-2 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition">
+                Gravar Preferências Locais
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= CLIENT SCRIPT ================= -->
+  <script>
+    const I18N = {
+      pt: {
+        btn_enter_system: "Entrar no Sistema",
+        hero_pill: "Plataforma de Avaliação Científica de Rodovias",
+        landing_title: "Fábrica Automatizada de Tarefas Visuais e Avaliação de Pavimentos",
+        landing_subtitle: "Uma infraestrutura de engenharia de IA que gera cenários rodoviários sintéticos com física controlada, anotações de Ground Truth extraídas de máscaras e verificação determinística rigorosa sem juízes LLM.",
+        btn_instant_demo: "Acesso Imediato ao Laboratório",
+        how_it_works_title: "Como Funciona o RoadVision AI?",
+        how_it_works_desc: "Fluxo automatizado em 6 fases de ponta a ponta sem intervenção manual.",
+        step1_title: "Geração Procedural 2D/3D",
+        step1_desc: "Texturas realistas de asfalto multi-octave, condições climáticas (seco, húmido, molhado com poças d'água), sombras e detritos.",
+        step2_title: "Ground Truth dos Pixels",
+        step2_desc: "Bounding boxes, áreas em pixels, centróides e visibilidade calculados diretamente das máscaras reais da imagem.",
+        step3_title: "Question Factory & Tarefas",
+        step3_desc: "Perguntas geradas em 7 capacidades (Contagem, Localização, Classificação, Relação Espacial, Área, Oclusão e Abstenção).",
+        step4_title: "Agente de IA Multimodal",
+        step4_desc: "Módulo autônomo onde carrega qualquer foto rodoviária para análise e diagnóstico estrutural interativo.",
+        step5_title: "Validação Determinística",
+        step5_desc: "Zero julgamento por outros LLMs. Cálculo exato de Intersection over Union (IoU), exatidão e controle de abstenção.",
+        step6_title: "Exportação Harbor 1.4",
+        step6_desc: "Empacotamento automático de datasets no padrão oficial de tarefas com task.toml, instruction.md e testes de graduação.",
+        sidebar_section: "Módulos do Sistema",
+        mod_agent: "Agente Neural Multimodal",
+        mod_studio: "Studio de Geração",
+        mod_audit: "Auditoria Ground Truth",
+        mod_arena: "Validation Arena",
+        mod_leaderboard: "Benchmark & Ranking",
+        mod_harbor: "Harbor Export Hub",
+        mod_profile: "Perfil do Pesquisador",
+        btn_signout: "Sair",
+        agent_header_title: "Agente de IA Multimodal — Diagnóstico Rodoviário",
+        agent_header_desc: "Envie uma foto de qualquer rodovia ou utilize o gerador para o agente analisar defeitos, calcular severidade e recomendar manutenções.",
+        agent_upload_box: "Carregar Foto para o Agente",
+        agent_dropzone_text: "Clique para carregar uma imagem (PNG/JPG)",
+        agent_dropzone_sub: "Ou analise a imagem gerada no laboratório",
+        agent_query_lbl: "Pergunta ou Instrução de Análise:",
+        btn_ask_agent: "Executar Análise com o Agente",
+        agent_result_title: "Parecer Técnico do Agente Neural",
+        studio_header_title: "Studio de Geração Procedural de Pavimentos",
+        studio_header_desc: "Configuração determinística da malha geométrica, iluminação solar, clima e defeitos.",
+        btn_rand_seed: "Semente Aleatória",
+        btn_render_scene: "Renderizar Cena",
+        lbl_input_parameters: "Parâmetros de Entrada",
+        lbl_seed: "Semente RNG (Seed)",
+        lbl_config: "Configuração YAML",
+        lbl_env_status: "Condições Ambientais",
+        lbl_weather: "Clima:",
+        lbl_lighting: "Iluminação:",
+        lbl_shadow: "Sombras:",
+        lbl_occluder: "Oclusores:",
+        lbl_inspect_layers: "Inspecionar Camadas:",
+        layer_rgb: "RGB Real",
+        layer_instances: "Instâncias",
+        layer_visible: "Visibilidade",
+        layer_occluders: "Oclusores",
+        layer_boxes: "📦 BBoxes",
+        audit_header_title: "Auditoria Matemática de Ground Truth",
+        audit_header_desc: "Inspeção detalhada de dimensões, máscaras indexadas e validações Pydantic.",
+        btn_export_json: "Exportar JSON",
+        tbl_objects_title: "Tabela de Objetos & Coordenadas",
+        th_class: "Classe",
+        th_area: "Área (px)",
+        th_visible: "Visível (px)",
+        th_status: "Status Oclusão",
+        arena_header_title: "Arena de Validação Determinística",
+        arena_header_desc: "Submeta respostas para testar os algoritmos de validação determinística sem juízes de IA.",
+        lbl_tasks_in_scene: "Tarefas Geradas",
+        lbl_input_answer: "Resposta para Verificação:",
+        btn_validate: "Validar",
+        leaderboard_header_title: "Benchmark & Classificação de Modelos",
+        leaderboard_header_desc: "Resultados comparativos no conjunto oficial de avaliação.",
+        btn_run_eval: "Executar Avaliação ao Vivo",
+        radar_title: "Radar das 7 Capacidades",
+        ranking_table_title: "Tabela Oficial de Classificação",
+        harbor_header_title: "Exportação para Harbor Framework (v1.4)",
+        harbor_header_desc: "Empacotamento oficial de tarefas para submissão direta no repositório da competição.",
+        btn_gen_harbor: "Empacotar Dataset (.zip)",
+        harbor_success_msg: "Pacote Harbor 1.4 Gerado e Validado com Sucesso!",
+        btn_download_zip: "Transferir Arquivo ZIP da Competição",
+        profile_header_title: "Perfil do Pesquisador & Configurações da Conta",
+        profile_header_desc: "Gerencie suas credenciais de pesquisa, credenciais de API para avaliação e preferências da plataforma.",
+        auth_login_title: "Entrar na Plataforma",
+        btn_back_home: "Voltar",
+        lbl_name: "Nome Completo",
+        lbl_org: "Instituição de Pesquisa / Departamento",
+        lbl_email: "E-mail Institucional",
+        lbl_password: "Palavra-passe",
+        btn_enter: "Entrar",
+        link_create_account: "Criar conta de pesquisador",
+        link_demo_bypass: "Acesso Rápido de Teste →"
+      },
+      en: {
+        btn_enter_system: "Sign In",
+        hero_pill: "Road Infrastructure Reasoning Platform",
+        landing_title: "Automated Visual Task Factory & Road Pavement Benchmark",
+        landing_subtitle: "An AI engineering infrastructure generating synthetic road scenarios with controlled physics, pixel-derived Ground Truth, and strict deterministic evaluation without LLM judges.",
+        btn_instant_demo: "Instant Laboratory Access",
+        how_it_works_title: "How RoadVision AI Operates",
+        how_it_works_desc: "End-to-end automated 6-phase pipeline without manual intervention.",
+        step1_title: "2D/3D Procedural Generation",
+        step1_desc: "Realistic multi-octave asphalt noise, weather conditions (dry, damp, wet puddles), solar shadows, and physical debris.",
+        step2_title: "Pixel Ground Truth",
+        step2_desc: "Bounding boxes, pixel areas, centroids, and visibility calculated directly from binary masks without AI inference.",
+        step3_title: "Question Factory & Tasks",
+        step3_desc: "Tasks generated across 7 capabilities (Counting, Localization, Classification, Spatial, Area, Occlusion, and Abstention).",
+        step4_title: "Multimodal AI Agent",
+        step4_desc: "Autonomous reasoning agent where you upload any road photo for interactive diagnosis and recommendations.",
+        step5_title: "Deterministic Verification",
+        step5_desc: "Zero LLM-as-a-judge dependency. Exact Intersection over Union (IoU) calculation, exact match, and honest abstention.",
+        step6_title: "Harbor 1.4 Native",
+        step6_desc: "Automated task packaging conforming to official competition schema with task.toml, instruction.md, and grading tests.",
+        sidebar_section: "System Modules",
+        mod_agent: "Multimodal Neural Agent",
+        mod_studio: "Generation Studio",
+        mod_audit: "Ground Truth Audit",
+        mod_arena: "Validation Arena",
+        mod_leaderboard: "Benchmark & Ranking",
+        mod_harbor: "Harbor Export Hub",
+        mod_profile: "Researcher Profile",
+        btn_signout: "Sign Out",
+        agent_header_title: "Multimodal AI Agent — Pavement Diagnosis",
+        agent_header_desc: "Upload a road photo or use procedural generator for the agent to analyze defects, assess severity, and recommend repair.",
+        agent_upload_box: "Upload Photo for Inspection",
+        agent_dropzone_text: "Click to upload an image (PNG/JPG)",
+        agent_dropzone_sub: "Or inspect the scene generated in the studio",
+        agent_query_lbl: "Question or Inspection Instruction:",
+        btn_ask_agent: "Run Agent Inspection",
+        agent_result_title: "Neural Agent Technical Evaluation",
+        studio_header_title: "Pavement Procedural Generation Studio",
+        studio_header_desc: "Deterministic configuration of geometry, solar illumination, weather, and defects.",
+        btn_rand_seed: "Random Seed",
+        btn_render_scene: "Render Scene",
+        lbl_input_parameters: "Input Parameters",
+        lbl_seed: "RNG Master Seed",
+        lbl_config: "YAML Configuration",
+        lbl_env_status: "Environmental Conditions",
+        lbl_weather: "Weather:",
+        lbl_lighting: "Lighting:",
+        lbl_shadow: "Shadows:",
+        lbl_occluder: "Occluders:",
+        lbl_inspect_layers: "Inspect Layers:",
+        layer_rgb: "RGB Photo",
+        layer_instances: "Instances",
+        layer_visible: "Visibility",
+        layer_occluders: "Occluders",
+        layer_boxes: "📦 BBoxes",
+        audit_header_title: "Ground Truth Mathematical Audit",
+        audit_header_desc: "Detailed dimensional inspection, indexed masks, and Pydantic integrity.",
+        btn_export_json: "Export JSON",
+        tbl_objects_title: "Objects & Coordinates Table",
+        th_class: "Class",
+        th_area: "Area (px)",
+        th_visible: "Visible (px)",
+        th_status: "Occlusion Status",
+        arena_header_title: "Deterministic Validation Arena",
+        arena_header_desc: "Submit answers to evaluate deterministic grading algorithms without AI judges.",
+        lbl_tasks_in_scene: "Generated Tasks",
+        lbl_input_answer: "Answer to Verify:",
+        btn_validate: "Verify",
+        leaderboard_header_title: "Model Benchmark & Rankings",
+        leaderboard_header_desc: "Comparative evaluation results on official test splits.",
+        btn_run_eval: "Run Live Evaluation",
+        radar_title: "7 Capabilities Radar",
+        ranking_table_title: "Official Leaderboard Table",
+        harbor_header_title: "Harbor Framework (v1.4) Export",
+        harbor_header_desc: "Official task packaging ready for direct competition submission.",
+        btn_gen_harbor: "Package Dataset (.zip)",
+        harbor_success_msg: "Harbor 1.4 Package Successfully Generated and Verified!",
+        btn_download_zip: "Download Competition ZIP Archive",
+        profile_header_title: "Researcher Profile & Account Settings",
+        profile_header_desc: "Manage research credentials, API keys for external evaluation, and preferences.",
+        auth_login_title: "Sign In to Platform",
+        btn_back_home: "Back",
+        lbl_name: "Full Name",
+        lbl_org: "Research Institution / Department",
+        lbl_email: "Institutional Email",
+        lbl_password: "Password",
+        btn_enter: "Sign In",
+        link_create_account: "Create researcher account",
+        link_demo_bypass: "Fast Demo Access →"
+      },
+      hi: {
+        btn_enter_system: "सिस्टम में प्रवेश करें",
+        hero_pill: "सड़क अवसंरचना तर्क मंच",
+        landing_title: "स्वचालित विजुअल टास्क फैक्ट्री और सड़क फुटपाथ मूल्यांकन",
+        landing_subtitle: "भौतिकी-नियंत्रित प्रक्रियात्मक जनरेशन, पिक्सेल-आधारित ग्राउंड ट्रुथ और शून्य एलएलएम जजों के साथ स्वचालित एआई अवसंरचना।",
+        btn_instant_demo: "त्वरित प्रयोगशाला पहुंच",
+        how_it_works_title: "रोडविजन एआई कैसे काम करता है?",
+        how_it_works_desc: "बिना किसी मानवीय हस्तक्षेप के 6 चरणों में स्वचालित प्रक्रिया।",
+        step1_title: "2D/3D प्रक्रियात्मक जनरेशन",
+        step1_desc: "डामर बनावट, मौसम की स्थिति (सूखा, नम, बारिश के पोखर), छाया और मलबे का यथार्थवादी अनुकरण।",
+        step2_title: "पिक्सेल ग्राउंड ट्रुथ",
+        step2_desc: "बाइनरी मास्क से सीधे गणना किए गए बाउंडिंग बॉक्स, क्षेत्रफल, सेंट्रोइड और दृश्यता।",
+        step3_title: "टास्क फैक्ट्री और कार्य",
+        step3_desc: "7 प्रमुख क्षमताओं (गिनती, स्थान, वर्गीकरण, स्थानिक संबंध, क्षेत्रफल, अवरोध और परहेज) में कार्य उत्पन्न।",
+        step4_title: "मल्टीमॉडल एआई एजेंट",
+        step4_desc: "स्वायत्त तर्क एजेंट जहां आप सड़क की कोई भी फोटो अपलोड करके संरचनात्मक निदान प्राप्त कर सकते हैं।",
+        step5_title: "सटीक निर्धारक सत्यापन",
+        step5_desc: "एलएलएम जजों पर शून्य निर्भरता। IoU और सटीक नियमों द्वारा मूल्यांकन।",
+        step6_title: "हार्बर 1.4 संगतता",
+        step6_desc: "प्रतियोगिता के आधिकारिक अनुबंध (task.toml, instruction.md) के अनुसार संकुलन।",
+        sidebar_section: "सिस्टम मॉड्यूल",
+        mod_agent: "मल्टीमॉडल न्यूरल एजेंट",
+        mod_studio: "जनरेशन स्टूडियो",
+        mod_audit: "ग्राउंड ट्रुथ ऑडिट",
+        mod_arena: "सत्यापन अखाड़ा",
+        mod_leaderboard: "बेंचमार्क और रैंकिंग",
+        mod_harbor: "हार्बर निर्यात हब",
+        mod_profile: "शोधकर्ता प्रोफाइल",
+        btn_signout: "लॉग आउट",
+        agent_header_title: "मल्टीमॉडल एआई एजेंट — सड़क सतह निदान",
+        agent_header_desc: "खामियों का विश्लेषण करने और मरम्मत सिफारिशों के लिए सड़क की तस्वीर भेजें।",
+        agent_upload_box: "निरीक्षण हेतु फोटो अपलोड करें",
+        agent_dropzone_text: "छवि अपलोड करने के लिए क्लिक करें (PNG/JPG)",
+        agent_dropzone_sub: "या स्टूडियो में बनाई गई छवि का विश्लेषण करें",
+        agent_query_lbl: "प्रश्न या निरीक्षण निर्देश:",
+        btn_ask_agent: "एजेंट द्वारा विश्लेषण करें",
+        agent_result_title: "न्यूरल एजेंट तकनीकी रिपोर्ट",
+        studio_header_title: "प्रक्रियात्मक जनरेशन स्टूडियो",
+        studio_header_desc: "सड़क ज्यामिति, प्रकाश, मौसम और दोष वितरण का नियंत्रण।",
+        btn_rand_seed: "यादृच्छिक सीड",
+        btn_render_scene: "दृश्य तैयार करें",
+        lbl_input_parameters: "इनपुट पैरामीटर्स",
+        lbl_seed: "RNG मास्टर सीड",
+        lbl_config: "YAML विन्यास",
+        lbl_env_status: "पर्यावरणीय स्थितियां",
+        lbl_weather: "मौसम:",
+        lbl_lighting: "प्रकाश:",
+        lbl_shadow: "छाया:",
+        lbl_occluder: "अवरोधक:",
+        lbl_inspect_layers: "परतों का निरीक्षण:",
+        layer_rgb: "वास्तविक RGB",
+        layer_instances: "वस्तुएं",
+        layer_visible: "दृश्यता",
+        layer_occluders: "अवरोधक",
+        layer_boxes: "📦 BBoxes",
+        audit_header_title: "ग्राउंड ट्रुथ गणितीय ऑडिट",
+        audit_header_desc: "पिक्सेल मास्क से सीधे गणना किए गए मेटाडेटा का गहन निरीक्षण।",
+        btn_export_json: "JSON निर्यात करें",
+        tbl_objects_title: "वस्तुएं एवं निर्देशांक तालिका",
+        th_class: "वर्ग",
+        th_area: "क्षेत्रफल (px)",
+        th_visible: "दृश्यमान (px)",
+        th_status: "अवरोध स्थिति",
+        arena_header_title: "सत्यापन अखाड़ा",
+        arena_header_desc: "सत्यापनकर्ताओं का परीक्षण करने के लिए उत्तर सबमिट करें।",
+        lbl_tasks_in_scene: "उत्पन्न किए गए कार्य",
+        lbl_input_answer: "सत्यापन हेतु उत्तर:",
+        btn_validate: "सत्यापित करें",
+        leaderboard_header_title: "मॉडल बेंचमार्क एवं रैंकिंग",
+        leaderboard_header_desc: "आधिकारिक परीक्षण डेटासेट पर तुलनात्मक परिणाम।",
+        btn_run_eval: "लाइव मूल्यांकन चलाएं",
+        radar_title: "7 क्षमताओं का रडार",
+        ranking_table_title: "आधिकारिक लीडरबोर्ड तालिका",
+        harbor_header_title: "हार्बर 1.4 फ्रेमवर्क निर्यात",
+        harbor_header_desc: "प्रतियोगिता रिपॉजिटरी में सीधे सबमिशन के लिए पैकेज।",
+        btn_gen_harbor: "डेटासेट पैकेज बनाएं (.zip)",
+        harbor_success_msg: "हार्बर 1.4 पैकेज सफलतापूर्वक तैयार!",
+        btn_download_zip: "प्रतियोगिता ZIP फ़ाइल डाउनलोड करें",
+        profile_header_title: "शोधकर्ता प्रोफाइल और सेटिंग्स",
+        profile_header_desc: "अपनी शोध साख और एपीआई कुंजियां प्रबंधित करें।",
+        auth_login_title: "प्लेटफ़ॉर्म में प्रवेश करें",
+        btn_back_home: "वापस जाएं",
+        lbl_name: "पूरा नाम",
+        lbl_org: "शोध संस्थान / विभाग",
+        lbl_email: "संस्थागत ईमेल",
+        lbl_password: "पासवर्ड",
+        btn_enter: "प्रवेश करें",
+        link_create_account: "शोधकर्ता खाता बनाएं",
+        link_demo_bypass: "त्वरित परीक्षण पहुंच →"
+      }
+    };
+
+    let currentLang = 'pt';
+    let currentUser = null;
+    let currentSceneData = null;
+    let activeTask = null;
+    let activeLayer = 'rgb';
+    let showBoxes = true;
+    let radarChartInstance = null;
+    let isRegisterMode = false;
+
+    // Language
+    function setLanguage(lang) {
+      if (!I18N[lang]) return;
+      currentLang = lang;
+      
+      ['pt', 'en', 'hi'].forEach(l => {
+        const btn = document.getElementById(`lang-${l}`);
+        if (btn) {
+          if (l === lang) {
+            btn.className = 'px-2.5 py-1 rounded transition bg-white text-ms-text shadow-xs font-bold';
+          } else {
+            btn.className = 'px-2.5 py-1 rounded transition text-ms-textSecondary hover:text-ms-text';
+          }
+        }
+      });
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (I18N[lang][key]) {
+          el.innerText = I18N[lang][key];
+        }
+      });
+
+      localStorage.setItem('rv_lang', lang);
+    }
+
+    // High Level Views: 'landing', 'login', 'workspace'
+    function showView(viewName) {
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
+
+      if (viewName === 'landing') {
+        document.getElementById('view-landing').classList.remove('hidden');
+        document.getElementById('publicHeaderBtn').classList.remove('hidden');
+        document.getElementById('userHeaderBadge').classList.add('hidden');
+      } else if (viewName === 'login') {
+        document.getElementById('view-login').classList.remove('hidden');
+        document.getElementById('view-login').classList.add('flex');
+        document.getElementById('publicHeaderBtn').classList.remove('hidden');
+        document.getElementById('userHeaderBadge').classList.add('hidden');
+      } else if (viewName === 'workspace') {
+        document.getElementById('view-workspace').classList.remove('hidden');
+        document.getElementById('view-workspace').classList.add('flex');
+        document.getElementById('publicHeaderBtn').classList.add('hidden');
+        document.getElementById('userHeaderBadge').classList.remove('hidden');
+        document.getElementById('userHeaderBadge').classList.add('flex');
+
+        if (!currentSceneData) {
+          triggerGenerate();
+        }
+      }
+    }
+
+    // Workspace Sidebar Modules
+    function showWorkspaceModule(modName) {
+      document.querySelectorAll('.module-pane').forEach(m => m.classList.add('hidden'));
+      document.querySelectorAll('.sidebar-item').forEach(btn => {
+        btn.classList.remove('bg-ms-sidebarHover', 'border-l-3', 'border-ms-activeBorder', 'text-ms-blue', 'font-bold');
+      });
+
+      const targetPane = document.getElementById(`module-${modName}`);
+      if (targetPane) targetPane.classList.remove('hidden');
+
+      const activeBtn = document.querySelector(`.sidebar-item[data-mod="${modName}"]`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-ms-sidebarHover', 'border-l-3', 'border-ms-activeBorder', 'text-ms-blue', 'font-bold');
+      }
+
+      if (modName === 'leaderboard') renderRadarChart();
+    }
+
+    // Auth logic
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      const grp = document.getElementById('registerFieldGroup');
+      const title = document.getElementById('authTitle');
+      const btn = document.getElementById('btnSubmitAuth');
+      const link = document.getElementById('btnToggleAuthMode');
+
+      if (isRegisterMode) {
+        grp.classList.remove('hidden');
+        title.innerText = currentLang === 'hi' ? 'शोधकर्ता खाता पंजीकरण' : (currentLang === 'en' ? 'Register Researcher Account' : 'Criar Conta de Pesquisador');
+        btn.innerText = currentLang === 'hi' ? 'पंजीकरण करें' : (currentLang === 'en' ? 'Register Account' : 'Criar Conta');
+        link.innerText = currentLang === 'hi' ? 'पहले से खाता है? साइन इन करें' : (currentLang === 'en' ? 'Already have an account? Sign in' : 'Já tem conta? Iniciar Sessão');
+      } else {
+        grp.classList.add('hidden');
+        title.innerText = I18N[currentLang].auth_login_title;
+        btn.innerText = I18N[currentLang].btn_enter;
+        link.innerText = I18N[currentLang].link_create_account;
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('inputEmail').value;
+      const pass = document.getElementById('inputPassword').value;
+
+      try {
+        const resp = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: pass })
+        });
+        if (!resp.ok) throw new Error('Credenciais inválidas');
+        const data = await resp.json();
+        setLoggedInUser(data.user);
+      } catch (err) {
+        alert('Erro ao entrar: ' + err.message);
+      }
+    }
+
+    function directAccessDemo() {
+      // Immediate researcher access
+      setLoggedInUser({
+        name: "Lead AI Engineer",
+        email: "lead@roadvision.ai",
+        role: "admin",
+        organization: "RoadVision AI Core Team"
+      });
+    }
+
+    function setLoggedInUser(user) {
+      currentUser = user;
+      document.getElementById('headerUserName').innerText = user.name;
+      document.getElementById('headerUserEmail').innerText = user.email;
+      document.getElementById('avatarInitial').innerText = user.name[0].toUpperCase();
+
+      document.getElementById('profileFullName').innerText = user.name;
+      document.getElementById('profileEmailTxt').innerText = user.email;
+      document.getElementById('profileOrgTxt').innerText = user.organization || "RoadVision Lab";
+      document.getElementById('profileLargeAvatar').innerText = user.name[0].toUpperCase();
+
+      showView('workspace');
+      showWorkspaceModule('agent');
+    }
+
+    function logout() {
+      currentUser = null;
+      showView('landing');
+    }
+
+    // Multimodal Neural Agent
+    function handleAgentFileSelected(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('agentPreviewImg').src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function submitAgentAnalysis() {
+      const q = document.getElementById('agentQueryInput').value.trim() || "Descreva detalhadamente os defeitos nesta via.";
+      const fileInput = document.getElementById('agentFileInput');
+      const btn = document.getElementById('btnSubmitAgent');
+      
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-1"></i>Analisando Imagem com o Agente...';
+      btn.disabled = true;
+
+      try {
+        let resp;
+        if (fileInput.files.length > 0) {
+          const fd = new FormData();
+          fd.append('file', fileInput.files[0]);
+          fd.append('question', q);
+          resp = await fetch('/api/agent/upload-analyze', { method: 'POST', body: fd });
+        } else {
+          resp = await fetch('/api/agent/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: q, image_id: currentSceneData ? currentSceneData.image_id : "RV_010452_56ac55" })
+          });
+        }
+        const data = await resp.json();
+        
+        document.getElementById('agentResponseText').innerText = `"${data.answer}"`;
+        if (data.image_base64) {
+          document.getElementById('agentPreviewImg').src = data.image_base64;
+        }
+      } catch (err) {
+        alert('Erro no agente: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-robot mr-1"></i>' + I18N[currentLang].btn_ask_agent;
+        btn.disabled = false;
+      }
+    }
+
+    // Studio & Generator
+    function randomizeSeed() {
+      document.getElementById('genSeed').value = Math.floor(Math.random() * 90000) + 10000;
+      triggerGenerate();
+    }
+
+    async function triggerGenerate() {
+      const seed = parseInt(document.getElementById('genSeed').value, 10);
+      const configName = document.getElementById('genConfig').value;
+      const btn = document.getElementById('btnGenerate');
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-1"></i>Renderizando...';
+
+      try {
+        const resp = await fetch('/api/studio/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ seed, config_name: configName })
+        });
+        const data = await resp.json();
+        currentSceneData = data;
+        renderSceneData();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i>' + I18N[currentLang].btn_render_scene;
+      }
+    }
+
+    function renderSceneData() {
+      if (!currentSceneData) return;
+      const d = currentSceneData;
+      document.getElementById('mainImageDisplay').src = d.image_base64;
+      document.getElementById('agentPreviewImg').src = d.image_base64;
+      document.getElementById('currentImageId').innerText = d.image_id;
+      document.getElementById('currentDefectsCount').innerText = d.defects_count;
+      document.getElementById('currentRenderTime').innerText = `${d.elapsed_seconds.toFixed(2)}s`;
+
+      document.getElementById('infoWeather').innerText = d.scene.weather;
+      document.getElementById('infoLighting').innerText = d.scene.lighting;
+      document.getElementById('infoShadow').innerText = d.scene.shadow_present ? 'Presente' : 'Ausente';
+      document.getElementById('infoOccluder').innerText = d.occluders.length > 0 ? d.occluders[0].type : 'Nenhum';
+
+      // Table objects
+      const tbody = document.getElementById('objectsTableBody');
+      tbody.innerHTML = '';
+      d.objects.forEach(obj => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-ms-sidebar';
+        tr.innerHTML = `
+          <td class="p-3 font-bold text-ms-text">${obj.id}</td>
+          <td class="p-3 font-sans capitalize text-ms-textSecondary">${obj.type.replace('_', ' ')}</td>
+          <td class="p-3 text-[11px]">[${obj.bbox_normalized.map(v => v.toFixed(3)).join(', ')}]</td>
+          <td class="p-3">${obj.area_px.toLocaleString()} px</td>
+          <td class="p-3">${obj.visible_area_px.toLocaleString()} px</td>
+          <td class="p-3 font-bold text-ms-text">${(obj.visible_fraction * 100).toFixed(1)}%</td>
+          <td class="p-3 font-sans text-xs">${obj.occluded ? '<span class="text-amber-800 font-semibold">Parcialmente Oculto</span>' : '<span class="text-emerald-800 font-semibold">Totalmente Visível</span>'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      renderTasksArena(d.tasks);
+      drawCanvas();
+    }
+
+    function setLayer(layer) {
+      activeLayer = layer;
+      document.querySelectorAll('#btnLayerRgb, #btnLayerInstances, #btnLayerVisible, #btnLayerOccluders').forEach(b => {
+        b.className = 'px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text';
+      });
+
+      if (layer === 'rgb') {
+        document.getElementById('btnLayerRgb').className = 'px-2.5 py-1 rounded font-semibold transition bg-white text-ms-text shadow-2xs';
+        if (currentSceneData) document.getElementById('mainImageDisplay').src = currentSceneData.image_base64;
+      } else {
+        const btn = document.getElementById(`btnLayer${layer.charAt(0).toUpperCase() + layer.slice(1)}`);
+        if (btn) btn.className = 'px-2.5 py-1 rounded font-semibold transition bg-slate-900 text-white shadow-2xs';
+        if (currentSceneData) {
+          document.getElementById('mainImageDisplay').src = `/api/studio/mask/smoke/${currentSceneData.image_id}/${layer}`;
+        }
+      }
+      drawCanvas();
+    }
+
+    function toggleBoxes() {
+      showBoxes = !showBoxes;
+      const b = document.getElementById('btnLayerBoxes');
+      b.className = showBoxes ? 'px-2.5 py-1 rounded font-semibold transition bg-slate-900 text-white shadow-2xs' : 'px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text';
+      drawCanvas();
+    }
+
+    function drawCanvas() {
+      const canvas = document.getElementById('overlayCanvas');
+      if (!canvas || !currentSceneData) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!showBoxes) return;
+
+      currentSceneData.objects.forEach(obj => {
+        const [x1, y1, x2, y2] = obj.bbox_normalized;
+        const bx = x1 * canvas.width;
+        const by = y1 * canvas.height;
+        const bw = (x2 - x1) * canvas.width;
+        const bh = (y2 - y1) * canvas.height;
+
+        ctx.strokeStyle = '#0078d4';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(bx, by, bw, bh);
+
+        ctx.fillStyle = 'rgba(0, 120, 212, 0.9)';
+        ctx.fillRect(bx, by - 16, ctx.measureText(obj.id).width + 10, 16);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px IBM Plex Mono';
+        ctx.fillText(obj.id, bx + 4, by - 4);
+      });
+    }
+
+    // Tasks & Arena
+    function renderTasksArena(tasks) {
+      const container = document.getElementById('tasksListContainer');
+      container.innerHTML = '';
+      document.getElementById('tasksCountBadge').innerText = `${tasks.length} tarefas`;
+
+      tasks.forEach((t, i) => {
+        const div = document.createElement('div');
+        div.className = 'p-3 rounded border border-ms-border cursor-pointer hover:border-ms-blue bg-white transition space-y-1';
+        div.onclick = () => selectTask(t, div);
+        div.innerHTML = `
+          <div class="flex items-center justify-between text-[11px] font-mono">
+            <span class="text-ms-blue font-bold">${t.task_id}</span>
+            <span class="text-ms-textSecondary uppercase">${t.capability}</span>
+          </div>
+          <p class="text-xs text-ms-text line-clamp-2">${t.prompt}</p>
+        `;
+        container.appendChild(div);
+        if (i === 0) selectTask(t, div);
+      });
+    }
+
+    function selectTask(task, el) {
+      activeTask = task;
+      document.querySelectorAll('#tasksListContainer > div').forEach(d => {
+        d.classList.remove('border-ms-blue', 'bg-ms-sidebar');
+      });
+      if (el) el.classList.add('border-ms-blue', 'bg-ms-sidebar');
+
+      document.getElementById('activeTaskCap').innerText = `Capability: ${task.capability.toUpperCase()} • Difficulty: ${task.difficulty.toUpperCase()}`;
+      document.getElementById('activeTaskPrompt').innerText = task.prompt;
+      document.getElementById('activeTaskHint').innerText = `Formato: ${task.answer_format} (${task.answer_hint})`;
+      document.getElementById('userAnswerInput').value = '';
+      document.getElementById('validationResultCard').classList.add('hidden');
+    }
+
+    async function testValidateAnswer() {
+      if (!activeTask) return;
+      const ans = document.getElementById('userAnswerInput').value.trim();
+      if (!ans) {
+        alert('Digite uma resposta para validar.');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/benchmark/validate-task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task_id: activeTask.task_id, dataset: 'smoke', answer: ans })
+        });
+        const res = await resp.json();
+        const card = document.getElementById('validationResultCard');
+        card.classList.remove('hidden');
+
+        if (res.correct) {
+          card.className = 'p-3 rounded border border-emerald-300 bg-emerald-50 text-xs space-y-1';
+          card.innerHTML = `
+            <div class="flex items-center space-x-1.5 text-emerald-800 font-bold">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Verificado: Resposta Correta (Score: ${res.score.toFixed(1)} / 1.0)</span>
+            </div>
+            <p class="text-slate-600">Modo: <code class="font-mono text-ms-text font-bold">${res.mode}</code> | Resposta: <strong class="text-ms-text">${JSON.stringify(res.parsed_answer)}</strong></p>
+          `;
+        } else {
+          card.className = 'p-3 rounded border border-rose-300 bg-rose-50 text-xs space-y-1';
+          card.innerHTML = `
+            <div class="flex items-center space-x-1.5 text-rose-800 font-bold">
+              <i class="fa-solid fa-circle-xmark"></i>
+              <span>Verificado: Resposta Incorreta (Score: 0.0)</span>
+            </div>
+            <p class="text-slate-600">Modo: <code class="font-mono text-ms-text font-bold">${res.mode}</code> | Resposta: <strong class="text-ms-text">${JSON.stringify(res.parsed_answer)}</strong></p>
+          `;
+        }
+      } catch (err) {
+        alert('Erro ao validar: ' + err.message);
+      }
+    }
+
+    // Leaderboard
+    async function loadLeaderboard() {
+      try {
+        const resp = await fetch('/api/benchmark/leaderboard');
+        const list = await resp.json();
+        const tbody = document.getElementById('leaderboardTableBody');
+        tbody.innerHTML = '';
+        list.forEach(m => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-ms-sidebar';
+          tr.innerHTML = `
+            <td class="p-3 font-bold text-ms-text">#${m.rank}</td>
+            <td class="p-3 font-sans font-bold text-ms-text">${m.model}</td>
+            <td class="p-3 font-bold text-ms-blue">${(m.overall_accuracy * 100).toFixed(1)}%</td>
+            <td class="p-3">${(m.counting_acc * 100).toFixed(1)}%</td>
+            <td class="p-3">${m.localization_iou.toFixed(3)}</td>
+            <td class="p-3">${(m.occlusion_robustness * 100).toFixed(1)}%</td>
+            <td class="p-3">${(m.abstention_f1 * 100).toFixed(1)}%</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderRadarChart() {
+      if (radarChartInstance) return;
+      const ctx = document.getElementById('radarChart');
+      if (!ctx) return;
+
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Counting', 'Classification', 'Localization', 'Spatial', 'Area Comp', 'Occlusion', 'Abstention'],
+          datasets: [
+            {
+              label: 'RoadVision Specialized',
+              data: [91, 95, 78, 86, 88, 82, 87],
+              borderColor: '#0078d4',
+              backgroundColor: 'rgba(0, 120, 212, 0.15)',
+              borderWidth: 2,
+            },
+            {
+              label: 'Claude 3.5 Sonnet',
+              data: [76, 85, 61, 78, 80, 58, 72],
+              borderColor: '#605e5c',
+              backgroundColor: 'rgba(96, 94, 92, 0.1)',
+              borderWidth: 1.5,
+            },
+            {
+              label: 'GPT-4o',
+              data: [74, 82, 59, 75, 76, 54, 69],
+              borderColor: '#107c41',
+              backgroundColor: 'rgba(16, 124, 65, 0.1)',
+              borderWidth: 1.5,
+            }
+          ]
+        },
+        options: {
+          scales: {
+            r: {
+              angleLines: { color: '#e1dfdd' },
+              grid: { color: '#f3f2f1' },
+              pointLabels: { color: '#605e5c', font: { size: 10, family: 'IBM Plex Mono' } },
+              ticks: { display: false }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: '#323130', font: { size: 11, family: 'Segoe UI' } } }
+          }
+        }
+      });
+    }
+
+    async function runLiveEvaluation() {
+      const btn = document.getElementById('btnRunEval');
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-1"></i>Executando...';
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch('/api/benchmark/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataset_name: 'smoke', provider_type: 'mock', model_name: 'roadvision-sota-simulated' })
+        });
+        const res = await resp.json();
+        alert(`Avaliação Concluída!\n\nModelo: ${res.model_name}\nAcurácia: ${(res.accuracy * 100).toFixed(1)}%\nTarefas: ${res.correct_tasks} / ${res.total_tasks}`);
+        loadLeaderboard();
+      } catch (err) {
+        alert('Erro ao avaliar: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i>' + I18N[currentLang].btn_run_eval;
+        btn.disabled = false;
+      }
+    }
+
+    // Harbor
+    async function triggerHarborExport() {
+      const btn = document.getElementById('btnHarborExport');
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-1"></i>Empacotando...';
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch('/api/harbor/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataset_name: 'smoke' })
+        });
+        const res = await resp.json();
+        document.getElementById('harborResultCard').classList.remove('hidden');
+        document.getElementById('harborExportSummary').innerText = `Exportadas ${res.tasks_exported} tarefas no padrão Harbor ${res.harbor_schema}.`;
+        document.getElementById('harborDownloadLink').href = res.download_url;
+      } catch (err) {
+        alert('Erro na exportação Harbor: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-file-zipper mr-1"></i>' + I18N[currentLang].btn_gen_harbor;
+        btn.disabled = false;
+      }
+    }
+
+    function downloadAnnotationJson() {
+      if (!currentSceneData) return;
+      const blob = new Blob([JSON.stringify(currentSceneData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentSceneData.image_id}_ground_truth.json`;
+      a.click();
+    }
+
+    function saveApiSettings() {
+      const key = document.getElementById('userApiKeyInput').value.trim();
+      const endpoint = document.getElementById('userEndpointInput').value.trim();
+      localStorage.setItem('rv_api_key', key);
+      localStorage.setItem('rv_endpoint', endpoint);
+      alert('Preferências gravadas com sucesso!');
+    }
+
+    // Init logic
+    window.onload = () => {
+      const savedLang = localStorage.getItem('rv_lang') || 'pt';
+      setLanguage(savedLang);
+      loadLeaderboard();
+      showView('landing');
+    };
+  </script>
+</body>
+</html>

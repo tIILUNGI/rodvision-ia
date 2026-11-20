@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoadVision AI — Enterprise Road Infrastructure Intelligence & Visual Benchmark</title>
+  <!-- Tailwind CSS & FontAwesome & Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Segoe UI"', '"Plus Jakarta Sans"', 'Noto Sans Devanagari', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+          colors: {
+            ms: {
+              blue: '#0078d4',
+              blueDark: '#106ebe',
+              blueLight: '#deecf9',
+              sidebar: '#f3f2f1',
+              sidebarHover: '#edebe9',
+              activeBorder: '#0078d4',
+              border: '#e1dfdd',
+              text: '#323130',
+              textSecondary: '#605e5c',
+              bg: '#faf9f8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #faf9f8; color: #323130; font-family: 'Segoe UI', sans-serif; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f3f2f1; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #c8c6c4; border-radius: 3px; }
+    .hero-glow { box-shadow: 0 20px 40px -15px rgba(0, 120, 212, 0.15); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col custom-scroll">
+
+  <!-- ================= TOP GLOBAL APP BAR (Hidden on Dedicated Login Screen) ================= -->
+  <header id="globalHeader" class="sticky top-0 z-50 bg-white border-b border-ms-border px-5 py-2 flex items-center justify-between shadow-2xs">
+    <div class="flex items-center space-x-3 cursor-pointer" onclick="showView('landing')">
+      <img src="/static/logo_corporate_clean.png" alt="RoadVision AI" class="h-8 md:h-9 w-auto object-contain">
+    </div>
+
+    <!-- LANGUAGE & AUTH CONTROLS -->
+    <div class="flex items-center space-x-3">
+      <!-- 3 LANGUAGES SWITCHER (EN DEFAULT, PT, HI) -->
+      <div class="flex items-center bg-ms-sidebar border border-ms-border p-0.5 rounded text-xs font-semibold">
+        <button onclick="setLanguage('en')" id="lang-en" class="px-2.5 py-1 rounded transition bg-white text-ms-text shadow-xs font-bold">EN</button>
+        <button onclick="setLanguage('pt')" id="lang-pt" class="px-2.5 py-1 rounded transition text-ms-textSecondary hover:text-ms-text">PT</button>
+        <button onclick="setLanguage('hi')" id="lang-hi" class="px-2.5 py-1 rounded transition text-ms-textSecondary hover:text-ms-text font-sans" title="Hindi (हिंदी)">हिन्दी</button>
+      </div>
+
+      <!-- PUBLIC ACCESS BUTTON -->
+      <div id="publicHeaderBtn">
+        <button onclick="showView('login')" class="px-4 py-1.5 rounded text-xs font-semibold bg-ms-blue text-white hover:bg-ms-blueDark transition flex items-center space-x-1.5 shadow-2xs">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span data-i18n="btn_enter_system">Sign In</span>
+        </button>
+      </div>
+
+      <!-- LOGGED USER PROFILE BADGE -->
+      <div id="userHeaderBadge" class="hidden items-center space-x-2">
+        <button onclick="showWorkspaceModule('profile')" class="flex items-center space-x-2 hover:bg-ms-sidebar p-1.5 rounded transition">
+          <div class="w-7 h-7 rounded-full bg-ms-blue text-white flex items-center justify-center text-xs font-bold font-mono" id="avatarInitial">R</div>
+          <div class="text-left hidden sm:block">
+            <p class="text-xs font-bold text-ms-text leading-none" id="headerUserName">Lead Researcher</p>
+            <span class="text-[10px] text-ms-textSecondary font-mono" id="headerUserEmail">lead@roadvision.ai</span>
+          </div>
+        </button>
+        <button onclick="logout()" class="px-2 py-1 text-ms-textSecondary hover:text-red-600 rounded text-xs transition" title="Sign Out">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= VIEW 1: COMPLETE PUBLIC ENTERPRISE LANDING PAGE ================= -->
+  <div id="view-landing" class="view-panel w-full">
+
+    <!-- HERO SECTION WITH COMPREHENSIVE VALUE PROP & ENQUADRAMENTO ELEGANTE -->
+    <section class="bg-gradient-to-b from-white to-[#faf9f8] border-b border-ms-border py-12 md:py-16 px-6">
+      <div class="max-w-6xl mx-auto space-y-8">
+        
+        <!-- TOP HEADLINE & VALUE PROP -->
+        <div class="text-center space-y-4 max-w-4xl mx-auto">
+          <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-ms-blueLight text-ms-blueDark text-xs font-semibold border border-ms-blue/20 shadow-2xs">
+            <span class="w-2 h-2 rounded-full bg-ms-blue animate-pulse"></span>
+            <span data-i18n="hero_pill">Enterprise Autonomous Infrastructure Intelligence & Benchmarking</span>
+          </div>
+
+          <h1 class="text-3xl md:text-5xl font-extrabold text-ms-text tracking-tight leading-tight" data-i18n="landing_title">
+            The Scientific Benchmark for Multimodal AI in Road Infrastructure
+          </h1>
+
+          <p class="text-sm md:text-base text-ms-textSecondary max-w-3xl mx-auto leading-relaxed" data-i18n="landing_subtitle">
+            Turn road surface inspection into a mathematically verifiable science. Generate physics-controlled synthetic road defects, derive pixel-exact Ground Truth without AI guesswork, and benchmark vision models against zero-leakage deterministic verifiers.
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button onclick="showView('login')" class="px-6 py-2.5 rounded text-sm font-bold bg-ms-blue hover:bg-ms-blueDark text-white shadow-xs transition flex items-center space-x-2">
+              <i class="fa-solid fa-flask"></i>
+              <span data-i18n="btn_enter_system">Launch Research Workstation</span>
+            </button>
+            <button onclick="directAccessDemo()" class="px-6 py-2.5 rounded text-sm font-semibold bg-white hover:bg-ms-sidebar text-ms-text border border-ms-border shadow-2xs transition flex items-center space-x-2">
+              <i class="fa-solid fa-play text-ms-blue"></i>
+              <span data-i18n="btn_instant_demo">Explore Live Demonstration</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ENQUADRAMENTO IMPECÁVEL DA IMAGEM: CONSOLE DE INSPEÇÃO ROADVISION -->
+        <div class="max-w-5xl mx-auto">
+          <div class="bg-white rounded-xl border border-ms-border shadow-lg overflow-hidden hero-glow">
+            
+            <!-- Window Console Chrome Bar -->
+            <div class="bg-ms-sidebar border-b border-ms-border px-4 py-2.5 flex items-center justify-between text-xs text-ms-textSecondary">
+              <div class="flex items-center space-x-2">
+                <div class="flex space-x-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-300 inline-block"></span>
+                </div>
+                <span class="font-mono text-[11px] font-semibold text-ms-text ml-2">RoadVision AI Inspection Engine</span>
+                <span class="hidden sm:inline-block text-[11px] font-mono text-slate-400">| Frame: RV_010452_56ac55 • 1024×576 • Physics-Calibrated</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  <i class="fa-solid fa-check-double mr-1"></i> Ground Truth Exact
+                </span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono bg-blue-100 text-blue-800 border border-blue-200">
+                  Harbor 1.4 Native
+                </span>
+              </div>
+            </div>
+
+            <!-- Image Viewport with Perfect Aspect Ratio and Responsive Containment -->
+            <div class="relative bg-slate-950 flex items-center justify-center overflow-hidden">
+              <img src="/static/road_hero.jpg" alt="RoadVision AI Road Defect Inspection" class="w-full h-auto max-h-[500px] object-contain block mx-auto">
+            </div>
+
+            <!-- Interactive Inspection Telemetry Strip Beneath Image -->
+            <div class="bg-white p-4 border-t border-ms-border grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div class="flex items-start space-x-3 p-2 rounded bg-ms-bg border border-ms-border">
+                <div class="w-3 h-3 rounded-full bg-blue-500 mt-1 shrink-0"></div>
+                <div>
+                  <p class="font-bold text-ms-text">Pothole Anomaly #01</p>
+                  <p class="text-ms-textSecondary text-[11px]">Area: <strong class="text-ms-text">1.24 m²</strong> • Severity: High • BBox IoU: <strong class="text-emerald-700">0.94</strong></p>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-3 p-2 rounded bg-ms-bg border border-ms-border">
+                <div class="w-3 h-3 rounded-full bg-amber-500 mt-1 shrink-0"></div>
+                <div>
+                  <p class="font-bold text-ms-text">Longitudinal Crack</p>
+                  <p class="text-ms-textSecondary text-[11px]">Length: <strong class="text-ms-text">2.1 m</strong> • Mask: 8,420 px • Spatial: Right of center</p>
+                </div>
+              </div>
+
+              <div class="flex items-start space-x-3 p-2 rounded bg-ms-bg border border-ms-border">
+                <div class="w-3 h-3 rounded-full bg-emerald-500 mt-1 shrink-0"></div>
+                <div>
+                  <p class="font-bold text-ms-text">Secondary Defect #02</p>
+                  <p class="text-ms-textSecondary text-[11px]">Area: <strong class="text-ms-text">0.63 m²</strong> • Depth: Moderate • Zero-LLM Deterministic</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- KEY VALUE METRICS STRIP (THE BUSINESS CASE) -->
+    <section class="py-10 bg-white border-b border-ms-border px-6">
+      <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div class="space-y-1 p-3">
+          <p class="text-3xl font-extrabold text-ms-blue tracking-tight">85%</p>
+          <p class="text-xs font-bold text-ms-text" data-i18n="metric1_title">Survey Cost Reduction</p>
+          <p class="text-[11px] text-ms-textSecondary leading-snug" data-i18n="metric1_desc">Replaces manual walking surveys with automated procedural benchmarking.</p>
+        </div>
+        <div class="space-y-1 p-3">
+          <p class="text-3xl font-extrabold text-emerald-600 tracking-tight">100%</p>
+          <p class="text-xs font-bold text-ms-text" data-i18n="metric2_title">Deterministic Accuracy</p>
+          <p class="text-[11px] text-ms-textSecondary leading-snug" data-i18n="metric2_desc">Mathematical IoU and exact pixel geometry with zero LLM judge bias.</p>
+        </div>
+        <div class="space-y-1 p-3">
+          <p class="text-3xl font-extrabold text-purple-600 tracking-tight">7</p>
+          <p class="text-xs font-bold text-ms-text" data-i18n="metric3_title">Reasoning Dimensions</p>
+          <p class="text-[11px] text-ms-textSecondary leading-snug" data-i18n="metric3_desc">Evaluates Counting, Spatial Topology, BBox Localization, and Honest Abstention.</p>
+        </div>
+        <div class="space-y-1 p-3">
+          <p class="text-3xl font-extrabold text-cyan-600 tracking-tight">Harbor 1.4</p>
+          <p class="text-xs font-bold text-ms-text" data-i18n="metric4_title">Native Open Standard</p>
+          <p class="text-[11px] text-ms-textSecondary leading-snug" data-i18n="metric4_desc">Direct one-click export ready for competition submission and evaluation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAILED 7 MULTIMODAL CAPABILITIES (VISUAL TASK FACTORY) -->
+    <section class="py-16 max-w-6xl mx-auto px-6 space-y-10">
+      <div class="text-center space-y-2 max-w-2xl mx-auto">
+        <span class="text-xs font-bold text-ms-blue uppercase tracking-wider" data-i18n="cap_section_sub">— Visual Task Factory</span>
+        <h2 class="text-2xl md:text-3xl font-bold text-ms-text" data-i18n="cap_section_title">7 Dimensions of Visual Reasoning in Multimodal AI</h2>
+        <p class="text-xs md:text-sm text-ms-textSecondary leading-relaxed" data-i18n="cap_section_desc">
+          Most vision-language models hallucinate or fail spatial tests. RoadVision AI systematically isolates each cognitive failure mode through deterministic ground truth.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- Cap 1 -->
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2 hover:border-ms-blue transition">
+          <div class="w-8 h-8 rounded bg-ms-blueLight text-ms-blue flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-list-ol"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="cap1_name">Defect Counting & Density</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="cap1_text">
+            Tests whether the AI correctly counts multiple distinct potholes and cracks without double-counting adjacent anomalies.
+          </p>
+        </div>
+
+        <!-- Cap 2 -->
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2 hover:border-ms-blue transition">
+          <div class="w-8 h-8 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-tags"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="cap2_name">Severity Classification</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="cap2_text">
+            Distinguishes structural craters from superficial surface wear, alligator cracking, and pre-existing bitumen patches.
+          </p>
+        </div>
+
+        <!-- Cap 3 -->
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2 hover:border-ms-blue transition">
+          <div class="w-8 h-8 rounded bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-crosshairs"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="cap3_name">Bounding Box Localization</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="cap3_text">
+            Evaluates normalized coordinates [ymin, xmin, ymax, xmax] scored against exact pixel-contour IoU thresholds.
+          </p>
+        </div>
+
+        <!-- Cap 4 -->
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2 hover:border-ms-blue transition">
+          <div class="w-8 h-8 rounded bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-arrows-split-up-and-left"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="cap4_name">Spatial Topology Reasoning</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="cap4_text">
+            Verifies relative spatial orientation: determining if a defect lies left, right, foreground, or behind other road features.
+          </p>
+        </div>
+
+        <!-- Cap 5 -->
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2 hover:border-ms-blue transition">
+          <div class="w-8 h-8 rounded bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-scale-balanced"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="cap5_name">Area & Metric Comparison</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="cap5_text">
+            Compares surface footprint between competing anomalies in projected real-world square meters, not just 2D pixel size.
+          </p>
+        </div>
+
+        <!-- Cap 6 -->
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2 hover:border-ms-blue transition">
+          <div class="w-8 h-8 rounded bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-eye-slash"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="cap6_name">Occlusion & Weather Robustness</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="cap6_text">
+            Stress-tests vision models when defects are partially hidden under tree shadows, heavy rain reflections, or road debris.
+          </p>
+        </div>
+
+        <!-- Cap 7 -->
+        <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2 hover:border-ms-blue transition">
+          <div class="w-8 h-8 rounded bg-slate-200 text-slate-800 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text" data-i18n="cap7_name">Evidence Sufficiency & Abstention</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed" data-i18n="cap7_text">
+            Rewards models that explicitly declare "insufficient visual evidence" instead of fabricating answers under low visibility.
+          </p>
+        </div>
+
+        <!-- Cap Summary CTA -->
+        <div class="p-5 rounded-lg bg-gradient-to-br from-ms-blue to-ms-blueDark text-white space-y-2 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] uppercase font-bold tracking-wider text-ms-blueLight">100% Deterministic</span>
+            <h3 class="font-bold text-sm mt-1">Zero LLM-Judge Bias</h3>
+            <p class="text-xs text-slate-100 leading-relaxed mt-1">
+              Every score is computed via pure geometry and string parsing. No prompt injection, no stochastic scoring variance.
+            </p>
+          </div>
+          <button onclick="showView('login')" class="w-full py-2 bg-white text-ms-blue font-bold text-xs rounded hover:bg-ms-blueLight transition text-center shadow-xs">
+            Test Your Model Now →
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- COMPETITIVE ADVANTAGE MATRIX (WHY ROADVISION AI) -->
+    <section class="py-14 bg-white border-y border-ms-border px-6">
+      <div class="max-w-5xl mx-auto space-y-8">
+        <div class="text-center space-y-2">
+          <span class="text-xs font-bold text-ms-blue uppercase tracking-wider" data-i18n="comp_sub">— Architectural Superiority</span>
+          <h2 class="text-2xl font-bold text-ms-text" data-i18n="comp_title">How RoadVision AI Compares to Alternatives</h2>
+          <p class="text-xs text-ms-textSecondary max-w-xl mx-auto" data-i18n="comp_desc">Why synthetic procedural benchmarks solve the data leakage and annotation bottleneck.</p>
+        </div>
+
+        <div class="overflow-x-auto border border-ms-border rounded-lg shadow-2xs">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-ms-sidebar text-ms-text font-bold border-b border-ms-border">
+              <tr>
+                <th class="p-3.5">Capability / Requirement</th>
+                <th class="p-3.5 text-slate-500">Manual Highway Surveys</th>
+                <th class="p-3.5 text-slate-500">Generic VLM Prompting</th>
+                <th class="p-3.5 text-ms-blue bg-ms-blueLight/30 font-extrabold">RoadVision AI Factory</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-ms-border text-ms-textSecondary">
+              <tr class="hover:bg-ms-bg">
+                <td class="p-3 font-semibold text-ms-text">Ground Truth Accuracy</td>
+                <td class="p-3 text-red-600"><i class="fa-solid fa-xmark mr-1"></i> Subjective human bias</td>
+                <td class="p-3 text-red-600"><i class="fa-solid fa-xmark mr-1"></i> Hallucinatory</td>
+                <td class="p-3 font-bold text-emerald-700 bg-ms-blueLight/20"><i class="fa-solid fa-check mr-1"></i> Exact pixel masks (0% error)</td>
+              </tr>
+              <tr class="hover:bg-ms-bg">
+                <td class="p-3 font-semibold text-ms-text">Test Contamination / Leakage</td>
+                <td class="p-3 text-amber-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Static public sets</td>
+                <td class="p-3 text-red-600"><i class="fa-solid fa-xmark mr-1"></i> Severe pre-training leakage</td>
+                <td class="p-3 font-bold text-emerald-700 bg-ms-blueLight/20"><i class="fa-solid fa-check mr-1"></i> Zero leakage (fresh RNG seeds)</td>
+              </tr>
+              <tr class="hover:bg-ms-bg">
+                <td class="p-3 font-semibold text-ms-text">Judge Reliability</td>
+                <td class="p-3 text-slate-500">Manual review sheets</td>
+                <td class="p-3 text-red-600"><i class="fa-solid fa-xmark mr-1"></i> LLM-as-a-Judge inconsistent</td>
+                <td class="p-3 font-bold text-emerald-700 bg-ms-blueLight/20"><i class="fa-solid fa-check mr-1"></i> 100% Deterministic IoU parser</td>
+              </tr>
+              <tr class="hover:bg-ms-bg">
+                <td class="p-3 font-semibold text-ms-text">Turnaround Time</td>
+                <td class="p-3 text-slate-500">Weeks to months</td>
+                <td class="p-3 text-slate-500">Minutes per test</td>
+                <td class="p-3 font-bold text-emerald-700 bg-ms-blueLight/20"><i class="fa-solid fa-check mr-1"></i> Milliseconds (real-time GPU)</td>
+              </tr>
+              <tr class="hover:bg-ms-bg">
+                <td class="p-3 font-semibold text-ms-text">Standardized Competition Export</td>
+                <td class="p-3 text-red-600"><i class="fa-solid fa-xmark mr-1"></i> None</td>
+                <td class="p-3 text-red-600"><i class="fa-solid fa-xmark mr-1"></i> Raw text outputs</td>
+                <td class="p-3 font-bold text-emerald-700 bg-ms-blueLight/20"><i class="fa-solid fa-check mr-1"></i> Harbor 1.4 Native (.zip)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TARGET CUSTOMER SEGMENTS (WHO BUYS / USES THIS) -->
+    <section class="py-14 max-w-6xl mx-auto px-6 space-y-8">
+      <div class="text-center space-y-2">
+        <span class="text-xs font-bold text-ms-blue uppercase tracking-wider" data-i18n="ind_sub">— Enterprise Use Cases</span>
+        <h2 class="text-2xl font-bold text-ms-text" data-i18n="ind_title">Built for Industry Leaders Across 3 Core Domains</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg border border-ms-border shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-lg bg-blue-50 text-ms-blue flex items-center justify-center text-lg">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text">Multimodal AI Labs</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed">
+            Verify whether foundation vision models genuinely comprehend visual depth, scale, and surface geometry before production deployment.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg border border-ms-border shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-road"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text">Transport Authorities (DOTs)</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed">
+            Automate annual pavement condition indexing (PCI), prioritize road rehabilitation budgets, and eliminate expensive human contractor surveying errors.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg border border-ms-border shadow-2xs space-y-3">
+          <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-car-side"></i>
+          </div>
+          <h3 class="font-bold text-sm text-ms-text">Autonomous Vehicle Fleets</h3>
+          <p class="text-xs text-ms-textSecondary leading-relaxed">
+            Stress-test perception stacks against dangerous potholes, road debris, and water reflections under severe lighting conditions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HARBOR 1.4 INTEGRATION CALLOUT -->
+    <section class="py-12 bg-ms-sidebar border-y border-ms-border px-6">
+      <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="space-y-2">
+          <div class="inline-flex items-center space-x-2 text-xs font-bold text-ms-blue">
+            <i class="fa-solid fa-anchor"></i>
+            <span>Official Competition Native</span>
+          </div>
+          <h3 class="text-xl font-bold text-ms-text">Ready for Harbor Framework Benchmark Evaluation</h3>
+          <p class="text-xs text-ms-textSecondary max-w-2xl leading-relaxed">
+            Export complete task suites with <code>task.toml</code> (schema 1.4), markdown instructions, input images, deterministic reward scoring scripts (<code>tests/test.sh</code>), and oracle solutions.
+          </p>
+        </div>
+        <button onclick="showView('login')" class="px-5 py-2.5 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white shadow-xs transition shrink-0">
+          Export Harbor Package (.zip)
+        </button>
+      </div>
+    </section>
+
+    <!-- CTA FOOTER STRIP -->
+    <section class="py-16 bg-white px-6 text-center space-y-5">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-ms-text">Ready to Evaluate Road Infrastructure Models?</h2>
+      <p class="text-xs md:text-sm text-ms-textSecondary max-w-xl mx-auto leading-relaxed">
+        Access the enterprise workstation to generate synthetic scenes, run automated visual diagnostics, and benchmark multimodal models.
+      </p>
+      <div class="flex items-center justify-center space-x-3 pt-2">
+        <button onclick="showView('login')" class="px-6 py-2.5 rounded text-sm font-bold bg-ms-blue hover:bg-ms-blueDark text-white shadow-xs transition">
+          Enter Research Lab
+        </button>
+        <button onclick="directAccessDemo()" class="px-6 py-2.5 rounded text-sm font-semibold bg-ms-sidebar hover:bg-ms-sidebarHover text-ms-text border border-ms-border transition">
+          Instant Test Demo
+        </button>
+      </div>
+    </section>
+
+    <!-- COMPREHENSIVE ENTERPRISE FOOTER -->
+    <footer class="bg-white border-t border-ms-border py-10 text-xs text-ms-textSecondary px-6">
+      <div class="max-w-6xl mx-auto space-y-6">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center space-x-3">
+            <img src="/static/logo_corporate_clean.png" alt="RoadVision AI" class="h-7 w-auto object-contain">
+            <span class="text-slate-300">|</span>
+            <span class="text-[11px] font-mono text-ms-textSecondary">Harbor Specification v1.4 Native</span>
+          </div>
+          <div class="flex items-center space-x-6 text-xs">
+            <button onclick="showView('login')" class="text-ms-blue hover:underline">Workstation Login</button>
+            <button onclick="directAccessDemo()" class="text-ms-blue hover:underline">Live Demo</button>
+          </div>
+        </div>
+        <div class="border-t border-ms-border pt-4 flex flex-col md:flex-row items-center justify-between gap-2 text-[11px] text-slate-500">
+          <p>© 2026 RoadVision AI. All rights reserved.</p>
+          <div class="flex space-x-4">
+            <span>Enterprise Visual Inspection</span>
+            <span>•</span>
+            <span>Deterministic Ground Truth Engine</span>
+            <span>•</span>
+            <span>Autonomous Intelligence Platform</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ================= VIEW 2: DEDICATED LOGIN / REGISTER SCREEN (Sem Header Global!) ================= -->
+  <div id="view-login" class="view-panel hidden min-h-screen flex items-center justify-center p-4 md:p-8 bg-ms-bg">
+    <div class="max-w-4xl w-full bg-white rounded-xl border border-ms-border shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 min-h-[520px]">
+      
+      <!-- LEFT SIDE: REAL INFRASTRUCTURE IMAGE & CONTEXT -->
+      <div class="relative bg-slate-900 text-white p-8 flex flex-col justify-between overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/static/road_hero.jpg');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-900/40"></div>
+        <div class="relative z-10 space-y-2">
+          <div class="bg-white/95 p-1.5 rounded inline-block mb-1 shadow-sm">
+            <img src="/static/logo_corporate_clean.png" alt="Logo" class="h-6 w-auto">
+          </div>
+          <h3 class="text-xl font-bold leading-tight" data-i18n="login_side_title">Research Laboratory Access</h3>
+          <p class="text-xs text-slate-200 leading-relaxed font-light" data-i18n="login_side_desc">
+            Access the enclosed visual simulation environment, pixel-derived Ground Truth auditing, and autonomous neural diagnostic agents.
+          </p>
+        </div>
+
+        <div class="relative z-10 pt-4 border-t border-slate-700/80 text-[11px] text-slate-300 flex items-center justify-between">
+          <span>Platform Version: 1.0.0</span>
+          <span class="text-cyan-400 font-mono">Harbor 1.4 Native</span>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: CLEAN CORPORATE LOGIN FORM -->
+      <div class="p-8 flex flex-col justify-center space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3">
+          <h2 class="text-lg font-bold text-ms-text" id="authTitle" data-i18n="auth_login_title">Sign In to Platform</h2>
+          <button onclick="showView('landing')" class="text-xs text-ms-blue hover:text-ms-blueDark font-semibold flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span data-i18n="btn_back_home">Back to Home</span>
+          </button>
+        </div>
+
+        <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4 text-xs">
+          <div id="registerFieldGroup" class="hidden space-y-3">
+            <div>
+              <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_name">Full Name</label>
+              <input type="text" id="inputName" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_org">Research Institution / Department</label>
+              <input type="text" id="inputOrg" value="Transport AI Research Laboratory" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_email">Institutional Email</label>
+            <input type="email" id="inputEmail" value="lead@roadvision.ai" required class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_password">Password</label>
+            <input type="password" id="inputPassword" value="RoadVision2026!" required class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+          </div>
+
+          <div class="pt-1">
+            <button type="submit" id="btnSubmitAuth" class="w-full py-2.5 rounded font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition shadow-2xs" data-i18n="btn_enter">
+              Sign In
+            </button>
+          </div>
+        </form>
+
+        <div class="pt-3 border-t border-ms-border flex items-center justify-between text-xs text-ms-textSecondary">
+          <button onclick="toggleAuthMode()" id="btnToggleAuthMode" class="text-ms-blue hover:underline font-semibold" data-i18n="link_create_account">
+            Create researcher account
+          </button>
+          <button onclick="directAccessDemo()" class="text-ms-textSecondary hover:text-ms-text text-[11px]" data-i18n="link_demo_bypass">
+            Fast Demo Access →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= VIEW 3: INTERNAL WORKSPACE (Microsoft-style Sidebar Application) ================= -->
+    <!-- ================= VIEW 3: INTERNAL WORKSPACE (Microsoft-style Sidebar Application) ================= -->
+    <!-- ================= VIEW 3: INTERNAL WORKSPACE (Microsoft-style Sidebar Application) ================= -->
+  <div id="view-workspace" class="view-panel hidden flex-1 flex w-full h-[calc(100vh-53px)] overflow-hidden">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-64 bg-ms-sidebar border-r border-ms-border flex flex-col justify-between shrink-0 select-none">
+      <div class="p-3 space-y-4">
+        <div class="px-3 py-2 border-b border-ms-border">
+          <p class="text-[10px] font-bold text-ms-blue uppercase tracking-wider" data-i18n="sidebar_section">Engineering Modules</p>
+          <h2 class="text-xs font-bold text-ms-text">RoadVision AI Workstation</h2>
+        </div>
+
+        <nav class="space-y-1 text-xs font-semibold">
+          <button onclick="showWorkspaceModule('agent')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="agent">
+            <i class="fa-solid fa-robot w-4 text-ms-blue"></i>
+            <span data-i18n="mod_agent">Multimodal Neural Agent</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('studio')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="studio">
+            <i class="fa-solid fa-wand-magic-sparkles w-4 text-purple-600"></i>
+            <span data-i18n="mod_studio">Creation Studio</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('audit')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="audit">
+            <i class="fa-solid fa-microscope w-4 text-emerald-700"></i>
+            <span data-i18n="mod_audit">Ground Truth Audit</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('arena')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="arena">
+            <i class="fa-solid fa-bolt w-4 text-amber-600"></i>
+            <span data-i18n="mod_arena">Validation Arena</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('leaderboard')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="leaderboard">
+            <i class="fa-solid fa-chart-line w-4 text-blue-700"></i>
+            <span data-i18n="mod_leaderboard">Benchmark & Ranking</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('harbor')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="harbor">
+            <i class="fa-solid fa-anchor w-4 text-slate-700"></i>
+            <span data-i18n="mod_harbor">Harbor Export Hub</span>
+          </button>
+
+          <button onclick="showWorkspaceModule('profile')" class="sidebar-item w-full flex items-center space-x-2.5 px-3 py-2 rounded text-ms-text hover:bg-ms-sidebarHover transition text-left" data-mod="profile">
+            <i class="fa-solid fa-user-gear w-4 text-slate-600"></i>
+            <span data-i18n="mod_profile">Researcher Profile</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- FOOTER SIDEBAR (ACTIVE STATUS CARD) -->
+      <div class="p-3 border-t border-ms-border space-y-2 text-xs">
+        <div class="px-2.5 py-2 bg-white rounded border border-ms-border text-[11px] text-ms-textSecondary space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-ms-text">Engine Status</span>
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-800 font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1 animate-pulse"></span> Active
+            </span>
+          </div>
+          <p class="font-mono text-[10px] text-slate-600">Config: <strong class="text-ms-text" id="sidebarActiveDataset">smoke.yaml</strong></p>
+          <p class="font-mono text-[10px] text-slate-600">RNG Seed: <strong class="text-ms-blue font-bold" id="sidebarActiveSeed">10452</strong></p>
+        </div>
+        <button onclick="logout()" class="w-full py-1.5 rounded text-xs font-semibold text-ms-textSecondary hover:bg-ms-sidebarHover hover:text-red-600 transition flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-power-off"></i>
+          <span data-i18n="btn_signout">Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- RIGHT MAIN WORKSPACE CANVAS -->
+    <main class="flex-1 bg-ms-bg overflow-y-auto custom-scroll p-6">
+
+      <!-- ================= MODULE 1: MULTIMODAL NEURAL AGENT ================= -->
+      <section id="module-agent" class="module-pane space-y-6">
+        <div class="border-b border-ms-border pb-3 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="agent_header_title">Multimodal AI Agent — Pavement Diagnosis</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="agent_header_desc">Upload any road image or inspect procedural scenes for autonomous geometric defect detection and repair recommendations.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-[11px] font-mono bg-white border border-ms-border px-2.5 py-1 rounded text-ms-blue font-bold shadow-2xs">
+              Vision Engine: OpenCV Contour Analysis
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary" data-i18n="agent_upload_box">Upload Photo for Inspection</h3>
+
+            <div class="space-y-3 text-xs">
+              <div onclick="document.getElementById('agentFileInput').click()" class="border-2 border-dashed border-ms-border hover:border-ms-blue rounded-lg p-6 text-center cursor-pointer bg-ms-sidebar hover:bg-ms-sidebarHover transition space-y-2">
+                <i class="fa-solid fa-cloud-arrow-up text-2xl text-ms-blue"></i>
+                <p class="font-bold text-ms-text" data-i18n="agent_dropzone_text">Click to upload an image (PNG/JPG)</p>
+                <p class="text-[11px] text-ms-textSecondary" data-i18n="agent_dropzone_sub">Or analyze the procedural road scene generated in the studio</p>
+                <input type="file" id="agentFileInput" accept="image/*" class="hidden" onchange="handleAgentFileSelected(event)">
+              </div>
+
+              <div>
+                <label class="block font-semibold text-ms-text mb-1" data-i18n="agent_query_lbl">Question or Inspection Instruction:</label>
+                <textarea id="agentQueryInput" rows="3" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none" placeholder="Ex: Count the potholes, calculate their areas, and recommend repair priority."></textarea>
+              </div>
+
+              <button onclick="submitAgentAnalysis()" id="btnSubmitAgent" class="w-full py-2.5 rounded font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center justify-center space-x-1.5 shadow-2xs">
+                <i class="fa-solid fa-robot"></i>
+                <span data-i18n="btn_ask_agent">Run Agent Inspection</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary" data-i18n="agent_result_title">Neural Agent Technical Evaluation</h3>
+
+            <div class="relative w-full aspect-[3/2] bg-slate-950 rounded overflow-hidden border border-ms-border flex items-center justify-center">
+              <img id="agentPreviewImg" src="/static/road_hero.jpg" class="w-full h-full object-contain" alt="Inspection Preview">
+            </div>
+
+            <div class="p-3.5 bg-ms-bg rounded border border-ms-border text-xs space-y-1.5">
+              <div class="flex items-center space-x-2 text-ms-blue font-bold">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Diagnostic Assessment Output:</span>
+              </div>
+              <p class="text-ms-text italic leading-relaxed" id="agentResponseText">
+                "Upload a pavement image or ask a question to trigger live computer vision edge & contour analysis."
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 2: CREATION STUDIO (FULLY FUNCTIONAL & EXPANDED!) ================= -->
+      <section id="module-studio" class="module-pane hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3 flex-wrap gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="studio_header_title">Pavement Procedural Creation Studio</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="studio_header_desc">Generate synthetic roads with controlled asphalt noise, defects, weather puddles, lighting, and occluders.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="randomizeSeed()" class="px-3 py-1.5 rounded text-xs font-semibold bg-white border border-ms-border hover:bg-ms-sidebar text-ms-text transition shadow-2xs">
+              <i class="fa-solid fa-dice mr-1"></i><span data-i18n="btn_rand_seed">New Random Seed</span>
+            </button>
+            <button onclick="triggerGenerate()" id="btnGenerate" class="px-4 py-1.5 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center space-x-1.5 shadow-2xs">
+              <i class="fa-solid fa-play"></i>
+              <span data-i18n="btn_render_scene">Render Scene</span>
+            </button>
+            <button onclick="downloadSceneImage()" class="px-3 py-1.5 rounded text-xs font-semibold bg-white border border-ms-border hover:bg-ms-sidebar text-ms-text transition shadow-2xs" title="Download PNG">
+              <i class="fa-solid fa-image"></i>
+            </button>
+            <button onclick="downloadAnnotationJson()" class="px-3 py-1.5 rounded text-xs font-semibold bg-white border border-ms-border hover:bg-ms-sidebar text-ms-text transition shadow-2xs" title="Export Ground Truth JSON">
+              <i class="fa-solid fa-file-code"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- CREATION CONTROLS (4 cols) -->
+          <div class="lg:col-span-4 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary" data-i18n="lbl_input_parameters">Creation Controls</h3>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_seed">RNG Master Seed (Reproducibility)</label>
+                <div class="flex items-center space-x-1.5">
+                  <input type="number" id="genSeed" value="10452" class="flex-1 bg-ms-bg border border-ms-border rounded p-2 text-ms-text font-mono focus:border-ms-blue focus:outline-none">
+                  <button onclick="randomizeSeed()" class="px-3 py-2 bg-ms-sidebar hover:bg-ms-sidebarHover border border-ms-border rounded text-ms-text" title="Randomize">
+                    <i class="fa-solid fa-dice"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-ms-text mb-1" data-i18n="lbl_config">Configuration Benchmark Preset</label>
+                <select id="genConfig" onchange="onConfigChanged()" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+                  <option value="smoke">smoke.yaml (Fast Prototype • 4 defects)</option>
+                  <option value="dev">dev.yaml (Development Split • 32 images)</option>
+                  <option value="eval">eval.yaml (Official Benchmark Split • Multi-weather)</option>
+                </select>
+              </div>
+
+              <!-- WEATHER ENVIRONMENT SELECTOR -->
+              <div>
+                <label class="block font-semibold text-ms-text mb-1">Weather & Road Surface State</label>
+                <select id="genWeather" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none">
+                  <option value="wet">Wet with Water Puddles (High Reflectance)</option>
+                  <option value="damp">Damp / Moist Surface</option>
+                  <option value="dry">Dry Standard Asphalt</option>
+                </select>
+              </div>
+
+              <!-- LIGHTING CONDITION -->
+              <div>
+                <label class="block font-semibold text-ms-text mb-1">Sun Solar Illumination</label>
+                <select id="genLighting" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none">
+                  <option value="harsh">Harsh Midday Sun (Strong Cast Shadows)</option>
+                  <option value="golden">Golden Hour (Angled Warm Sunlight)</option>
+                  <option value="overcast">Overcast / Diffuse Cloud Cover</option>
+                </select>
+              </div>
+
+              <!-- REAL-TIME TELEMETRY CARD -->
+              <div class="p-3 rounded bg-ms-sidebar border border-ms-border space-y-2">
+                <span class="text-[11px] font-bold text-ms-text block uppercase" data-i18n="lbl_env_status">Scene Physics & Status</span>
+                <div class="flex items-center justify-between text-ms-textSecondary">
+                  <span data-i18n="lbl_weather">Weather:</span>
+                  <span class="font-mono font-bold text-ms-text" id="infoWeather">Wet (Reflections)</span>
+                </div>
+                <div class="flex items-center justify-between text-ms-textSecondary">
+                  <span data-i18n="lbl_lighting">Lighting:</span>
+                  <span class="font-mono font-bold text-ms-text" id="infoLighting">Harsh Sun</span>
+                </div>
+                <div class="flex items-center justify-between text-ms-textSecondary">
+                  <span data-i18n="lbl_shadow">Shadows:</span>
+                  <span class="font-mono font-bold text-ms-text" id="infoShadow">Present</span>
+                </div>
+                <div class="flex items-center justify-between text-ms-textSecondary">
+                  <span data-i18n="lbl_occluder">Occluders:</span>
+                  <span class="font-mono font-bold text-ms-text" id="infoOccluder">Debris Sheet</span>
+                </div>
+              </div>
+
+              <button onclick="triggerGenerate()" class="w-full py-2 bg-ms-blue hover:bg-ms-blueDark text-white font-bold rounded text-xs transition flex items-center justify-center space-x-2 shadow-2xs">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>Regenerate Procedural Road</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CANVAS & LAYERS INSPECTOR (8 cols) -->
+          <div class="lg:col-span-8 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="text-xs font-bold text-ms-text" data-i18n="lbl_inspect_layers">Inspect Visual Layers:</span>
+              <div class="flex items-center space-x-1 bg-ms-sidebar p-0.5 rounded border border-ms-border text-xs">
+                <button onclick="setInspectLayer('rgb')" id="layerBtn_rgb" class="px-2.5 py-1 rounded font-semibold transition bg-white text-ms-text shadow-2xs" data-i18n="layer_rgb">RGB Photo</button>
+                <button onclick="setInspectLayer('instances')" id="layerBtn_instances" class="px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text" data-i18n="layer_instances">Instances</button>
+                <button onclick="setInspectLayer('visible')" id="layerBtn_visible" class="px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text" data-i18n="layer_visible">Visibility</button>
+                <button onclick="setInspectLayer('occluders')" id="layerBtn_occluders" class="px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text" data-i18n="layer_occluders">Occluders</button>
+                <button onclick="toggleBoundingBoxes()" id="btnToggleBBoxes" class="px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text" data-i18n="layer_boxes">📦 BBoxes</button>
+              </div>
+            </div>
+
+            <!-- CANVAS CONTAINER WITH OVERLAYS -->
+            <div class="relative w-full aspect-[3/2] bg-slate-950 rounded overflow-hidden border border-ms-border flex items-center justify-center">
+              <img id="mainImageDisplay" src="/static/road_hero.jpg" class="w-full h-full object-contain" alt="Pavement Scene">
+              <div id="imageOverlayBBoxes" class="absolute inset-0 w-full h-full pointer-events-none"></div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-ms-textSecondary pt-1 font-mono">
+              <div>
+                <span>ID: <strong class="text-ms-text" id="currentImageId">RV_010452_56ac55</strong></span>
+                <span class="mx-2">•</span>
+                <span>Defects: <strong class="text-ms-text" id="currentDefectsCount">2</strong></span>
+              </div>
+              <div>
+                <span>Render Time: <strong class="text-ms-text" id="currentRenderTime">0.79s</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 3: GROUND TRUTH AUDIT ================= -->
+      <section id="module-audit" class="module-pane hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="audit_header_title">Ground Truth Mathematical Audit</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="audit_header_desc">Pixel-level verification of dimensions, binary masks, and strict Pydantic schema validation.</p>
+          </div>
+          <button onclick="downloadAnnotationJson()" class="px-3.5 py-1.5 rounded text-xs font-semibold bg-white border border-ms-border hover:bg-ms-sidebar text-ms-text transition flex items-center space-x-1.5 shadow-2xs">
+            <i class="fa-solid fa-download"></i>
+            <span data-i18n="btn_export_json">Export JSON</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-lg border border-ms-border overflow-hidden shadow-2xs">
+          <div class="p-3 bg-ms-sidebar border-b border-ms-border flex items-center justify-between">
+            <h3 class="text-xs font-bold text-ms-text uppercase tracking-wider" data-i18n="tbl_objects_title">Objects & Ground Truth Coordinates Table</h3>
+            <span class="text-xs font-mono font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <i class="fa-solid fa-check mr-1"></i>Pydantic Integrity Verified
+            </span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-ms-sidebar text-ms-textSecondary font-mono text-[11px] uppercase border-b border-ms-border">
+                <tr>
+                  <th class="p-3">ID</th>
+                  <th class="p-3" data-i18n="th_class">Class</th>
+                  <th class="p-3">Normalized BBox [ymin, xmin, ymax, xmax]</th>
+                  <th class="p-3" data-i18n="th_area">Area (px)</th>
+                  <th class="p-3" data-i18n="th_visible">Visible (px)</th>
+                  <th class="p-3">% Visible</th>
+                  <th class="p-3" data-i18n="th_status">Occlusion Status</th>
+                </tr>
+              </thead>
+              <tbody id="objectsTableBody" class="divide-y divide-ms-border text-ms-text font-mono"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 4: VALIDATION ARENA ================= -->
+      <section id="module-arena" class="module-pane hidden space-y-6">
+        <div class="border-b border-ms-border pb-3">
+          <h2 class="text-lg font-bold text-ms-text" data-i18n="arena_header_title">Deterministic Validation Arena</h2>
+          <p class="text-xs text-ms-textSecondary" data-i18n="arena_header_desc">Submit answers to test deterministic grading algorithms (exact match, IoU thresholding, honest abstention) without AI judges.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white p-4 rounded-lg border border-ms-border shadow-2xs space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary flex items-center justify-between">
+              <span data-i18n="lbl_tasks_in_scene">Generated Scene Tasks</span>
+              <span class="text-ms-text font-mono text-xs font-bold px-2 py-0.5 rounded bg-ms-sidebar" id="tasksCountBadge">0 tasks</span>
+            </h3>
+            <div id="tasksContainer" class="space-y-2 max-h-[460px] overflow-y-auto custom-scroll pr-1"></div>
+          </div>
+
+          <div class="lg:col-span-7 bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-4">
+            <div class="border-b border-ms-border pb-3">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] font-mono font-bold text-ms-blue uppercase" id="arenaCapability">Capability: COUNTING</span>
+                <span class="text-[10px] font-mono text-slate-500" id="arenaTaskId">Task #1</span>
+              </div>
+              <h3 class="text-base font-bold text-ms-text mt-1" id="arenaQuestionText">Select a task on the left</h3>
+              <p class="text-xs text-ms-textSecondary mt-1">Ground Truth Reference: <code class="font-mono text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded" id="arenaExpectedAnswer">—</code></p>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-xs font-bold text-ms-text" data-i18n="lbl_input_answer">Answer to Verify:</label>
+              <div class="flex items-center space-x-2">
+                <input type="text" id="arenaAnswerInput" placeholder="Type answer (e.g., 2, pothole, [0.1, 0.2, 0.4, 0.5])..." class="flex-1 bg-ms-bg border border-ms-border rounded p-2 text-xs text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+                <button onclick="submitTaskValidation()" class="px-4 py-2 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center space-x-1.5 shadow-2xs">
+                  <i class="fa-solid fa-check"></i>
+                  <span data-i18n="btn_validate">Verify</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="validationResultCard" class="hidden p-3.5 rounded border text-xs space-y-1.5"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 5: LEADERBOARD ================= -->
+      <section id="module-leaderboard" class="module-pane hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3 flex-wrap gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="leaderboard_header_title">Benchmark & Model Rankings</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="leaderboard_header_desc">Comparative evaluation results on official test splits across all 7 reasoning dimensions.</p>
+          </div>
+          <button onclick="runLiveEvaluation()" id="btnRunEval" class="px-4 py-2 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center space-x-1.5 shadow-2xs">
+            <i class="fa-solid fa-play"></i>
+            <span data-i18n="btn_run_eval">Run Live Evaluation</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white p-5 rounded-lg border border-ms-border shadow-2xs flex flex-col items-center justify-center">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary mb-2" data-i18n="radar_title">7 Capabilities Radar</h3>
+            <div class="w-full aspect-square max-w-[320px]">
+              <canvas id="radarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 bg-white rounded-lg border border-ms-border shadow-2xs overflow-hidden">
+            <div class="p-3 bg-ms-sidebar border-b border-ms-border flex items-center justify-between">
+              <h3 class="text-xs font-bold text-ms-text uppercase tracking-wider" data-i18n="ranking_table_title">Official Leaderboard Table</h3>
+              <span class="text-[11px] font-mono text-ms-textSecondary">Split: smoke • 100% Deterministic</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs font-mono">
+                <thead class="bg-ms-sidebar text-ms-textSecondary text-[11px] uppercase border-b border-ms-border">
+                  <tr>
+                    <th class="p-3">Rank</th>
+                    <th class="p-3 font-sans font-bold">Model</th>
+                    <th class="p-3 font-bold">Accuracy</th>
+                    <th class="p-3">Counting</th>
+                    <th class="p-3">IoU</th>
+                    <th class="p-3">Occlusion</th>
+                    <th class="p-3">Abstention</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboardTableBody" class="divide-y divide-ms-border text-ms-text"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 6: HARBOR EXPORT HUB ================= -->
+      <section id="module-harbor" class="module-pane hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-ms-border pb-3 flex-wrap gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-ms-text" data-i18n="harbor_header_title">Harbor Framework (v1.4) Export Hub</h2>
+            <p class="text-xs text-ms-textSecondary" data-i18n="harbor_header_desc">Package the generated dataset into the official containerized benchmark specification for direct competition evaluation.</p>
+          </div>
+          <button onclick="triggerHarborExport()" id="btnHarborExport" class="px-4 py-2 rounded text-xs font-bold bg-ms-blue hover:bg-ms-blueDark text-white transition flex items-center space-x-1.5 shadow-2xs">
+            <i class="fa-solid fa-file-zipper"></i>
+            <span data-i18n="btn_gen_harbor">Package Dataset (.zip)</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+            <span class="text-xs font-bold font-mono text-ms-blue">01 / task.toml</span>
+            <h4 class="font-bold text-ms-text text-sm">Task Contract</h4>
+            <p class="text-xs text-ms-textSecondary leading-relaxed">Official specification with `schema_version = "1.4"`, execution timeout, and Docker container mappings.</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+            <span class="text-xs font-bold font-mono text-ms-blue">02 / instruction.md</span>
+            <h4 class="font-bold text-ms-text text-sm">Model Prompt Isolation</h4>
+            <p class="text-xs text-ms-textSecondary leading-relaxed">Public instructions and raw input image without labels or ground truth to prevent any data leakage.</p>
+          </div>
+          <div class="bg-white p-5 rounded-lg border border-ms-border shadow-2xs space-y-2">
+            <span class="text-xs font-bold font-mono text-ms-blue">03 / tests/test.sh</span>
+            <h4 class="font-bold text-ms-text text-sm">Automated Grading Test</h4>
+            <p class="text-xs text-ms-textSecondary leading-relaxed">Deterministic shell script executed post-inference that computes the mathematical score and outputs to `/tmp/reward`.</p>
+          </div>
+        </div>
+
+        <div id="harborResultCard" class="hidden bg-emerald-50 border border-emerald-200 p-5 rounded-lg space-y-3">
+          <div class="flex items-center space-x-2 text-emerald-800 font-bold text-sm">
+            <i class="fa-solid fa-circle-check"></i>
+            <span data-i18n="harbor_success_msg">Harbor 1.4 Package Successfully Generated and Verified!</span>
+          </div>
+          <p class="text-xs text-emerald-700" id="harborExportSummary">Tasks packaged under official schema 1.4.</p>
+          <a id="harborDownloadLink" href="#" class="inline-flex items-center space-x-1.5 px-4 py-2 rounded text-xs font-bold bg-emerald-700 text-white hover:bg-emerald-800 transition shadow-2xs">
+            <i class="fa-solid fa-download"></i>
+            <span data-i18n="btn_download_zip">Download Competition ZIP Package</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ================= MODULE 7: RESEARCHER PROFILE ================= -->
+      <section id="module-profile" class="module-pane hidden space-y-6">
+        <div class="border-b border-ms-border pb-3">
+          <h2 class="text-lg font-bold text-ms-text" data-i18n="profile_header_title">Researcher Profile & System Settings</h2>
+          <p class="text-xs text-ms-textSecondary" data-i18n="profile_header_desc">Manage your research credentials, API evaluation parameters, and workstation preferences.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-4 bg-white p-6 rounded-lg border border-ms-border shadow-2xs text-center space-y-4">
+            <div class="w-20 h-20 rounded-full bg-ms-blue text-white flex items-center justify-center text-3xl font-bold font-mono mx-auto shadow-xs" id="profileLargeAvatar">
+              R
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-ms-text" id="profileFullName">Lead AI Researcher</h3>
+              <p class="text-xs text-ms-textSecondary" id="profileRoleBadge">Principal Investigator (Full Access)</p>
+            </div>
+
+            <div class="p-3 bg-ms-sidebar rounded text-left text-xs space-y-1.5">
+              <p><strong>Email:</strong> <span class="font-mono text-ms-text" id="profileEmailTxt">lead@roadvision.ai</span></p>
+              <p><strong>Institution:</strong> <span class="text-ms-text" id="profileOrgTxt">Transport AI Research Laboratory</span></p>
+              <p><strong>Privileges:</strong> <span class="text-emerald-700 font-bold">Admin Level 4</span></p>
+            </div>
+
+            <button onclick="logout()" class="w-full py-2 rounded text-xs font-bold bg-ms-sidebar hover:bg-ms-sidebarHover text-red-600 border border-ms-border transition">
+              <i class="fa-solid fa-power-off mr-1"></i>Sign Out
+            </button>
+          </div>
+
+          <div class="lg:col-span-8 bg-white p-6 rounded-lg border border-ms-border shadow-2xs space-y-5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ms-textSecondary">Evaluation API Credentials (Optional)</h3>
+            <p class="text-xs text-ms-textSecondary">
+              Configure endpoints or API tokens to benchmark commercial or local LLM/VLM models. Credentials persist only in local session memory.
+            </p>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block font-semibold text-ms-text mb-1">Commercial API Key / Token:</label>
+                <input type="password" id="userApiKeyInput" placeholder="sk-..." class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+              </div>
+
+              <div>
+                <label class="block font-semibold text-ms-text mb-1">Custom Inference Endpoint (vLLM / Ollama):</label>
+                <input type="text" id="userEndpointInput" value="http://localhost:11434/v1" class="w-full bg-ms-bg border border-ms-border rounded p-2 text-ms-text focus:border-ms-blue focus:outline-none font-mono">
+              </div>
+
+              <button onclick="saveApiSettings()" class="px-5 py-2 bg-ms-blue hover:bg-ms-blueDark text-white font-bold rounded text-xs transition shadow-2xs">
+                Save Preferences
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+  <!-- ================= CLIENT SCRIPT ================= -->
+  <script>
+    const I18N = {
+      en: {
+        btn_enter_system: "Sign In",
+        hero_pill: "Enterprise Autonomous Infrastructure Intelligence & Benchmarking",
+        landing_title: "The Scientific Benchmark for Multimodal AI in Road Infrastructure",
+        landing_subtitle: "Turn road surface inspection into a mathematically verifiable science. Generate physics-controlled synthetic road defects, derive pixel-exact Ground Truth without AI guesswork, and benchmark vision models against zero-leakage deterministic verifiers.",
+        btn_instant_demo: "Explore Live Demonstration",
+        metric1_title: "Survey Cost Reduction",
+        metric1_desc: "Replaces manual walking surveys with automated procedural benchmarking.",
+        metric2_title: "Deterministic Accuracy",
+        metric2_desc: "Mathematical IoU and exact pixel geometry with zero LLM judge bias.",
+        metric3_title: "Reasoning Dimensions",
+        metric3_desc: "Evaluates Counting, Spatial Topology, BBox Localization, and Honest Abstention.",
+        metric4_title: "Native Open Standard",
+        metric4_desc: "Direct one-click export ready for competition submission and evaluation.",
+        cap_section_sub: "— Visual Task Factory",
+        cap_section_title: "7 Dimensions of Visual Reasoning in Multimodal AI",
+        cap_section_desc: "Most vision-language models hallucinate or fail spatial tests. RoadVision AI systematically isolates each cognitive failure mode through deterministic ground truth.",
+        cap1_name: "Defect Counting & Density",
+        cap1_text: "Tests whether the AI correctly counts multiple distinct potholes and cracks without double-counting adjacent anomalies.",
+        cap2_name: "Severity Classification",
+        cap2_text: "Distinguishes structural craters from superficial surface wear, alligator cracking, and pre-existing bitumen patches.",
+        cap3_name: "Bounding Box Localization",
+        cap3_text: "Evaluates normalized coordinates [ymin, xmin, ymax, xmax] scored against exact pixel-contour IoU thresholds.",
+        cap4_name: "Spatial Topology Reasoning",
+        cap4_text: "Verifies relative spatial orientation: determining if a defect lies left, right, foreground, or behind other road features.",
+        cap5_name: "Area & Metric Comparison",
+        cap5_text: "Compares surface footprint between competing anomalies in projected real-world square meters, not just 2D pixel size.",
+        cap6_name: "Occlusion & Weather Robustness",
+        cap6_text: "Stress-tests vision models when defects are partially hidden under tree shadows, heavy rain reflections, or road debris.",
+        cap7_name: "Evidence Sufficiency & Abstention",
+        cap7_text: "Rewards models that explicitly declare 'insufficient visual evidence' instead of fabricating answers under low visibility.",
+        comp_sub: "— Architectural Superiority",
+        comp_title: "How RoadVision AI Compares to Alternatives",
+        comp_desc: "Why synthetic procedural benchmarks solve the data leakage and annotation bottleneck.",
+        ind_sub: "— Enterprise Use Cases",
+        ind_title: "Built for Industry Leaders Across 3 Core Domains",
+        sidebar_section: "Engineering Modules",
+        mod_agent: "Multimodal Neural Agent",
+        mod_studio: "Creation Studio",
+        mod_audit: "Ground Truth Audit",
+        mod_arena: "Validation Arena",
+        mod_leaderboard: "Benchmark & Ranking",
+        mod_harbor: "Harbor Export Hub",
+        mod_profile: "Researcher Profile",
+        btn_signout: "Sign Out",
+        agent_header_title: "Multimodal AI Agent — Pavement Diagnosis",
+        agent_header_desc: "Upload any road image or inspect procedural scenes for autonomous geometric defect detection and repair recommendations.",
+        agent_upload_box: "Upload Photo for Inspection",
+        agent_dropzone_text: "Click to upload an image (PNG/JPG)",
+        agent_dropzone_sub: "Or analyze the procedural road scene generated in the studio",
+        agent_query_lbl: "Question or Inspection Instruction:",
+        btn_ask_agent: "Run Agent Inspection",
+        agent_result_title: "Neural Agent Technical Evaluation",
+        studio_header_title: "Pavement Procedural Creation Studio",
+        studio_header_desc: "Generate synthetic roads with controlled asphalt noise, defects, weather puddles, lighting, and occluders.",
+        btn_rand_seed: "New Random Seed",
+        btn_render_scene: "Render Scene",
+        lbl_input_parameters: "Creation Controls",
+        lbl_seed: "RNG Master Seed (Reproducibility)",
+        lbl_config: "Configuration Benchmark Preset",
+        lbl_env_status: "Scene Physics & Status",
+        lbl_weather: "Weather:",
+        lbl_lighting: "Lighting:",
+        lbl_shadow: "Shadows:",
+        lbl_occluder: "Occluders:",
+        lbl_inspect_layers: "Inspect Visual Layers:",
+        layer_rgb: "RGB Photo",
+        layer_instances: "Instances",
+        layer_visible: "Visibility",
+        layer_occluders: "Occluders",
+        layer_boxes: "📦 BBoxes",
+        audit_header_title: "Ground Truth Mathematical Audit",
+        audit_header_desc: "Pixel-level verification of dimensions, binary masks, and strict Pydantic schema validation.",
+        btn_export_json: "Export JSON",
+        tbl_objects_title: "Objects & Ground Truth Coordinates Table",
+        th_class: "Class",
+        th_area: "Area (px)",
+        th_visible: "Visible (px)",
+        th_status: "Occlusion Status",
+        arena_header_title: "Deterministic Validation Arena",
+        arena_header_desc: "Submit answers to test deterministic grading algorithms without AI judges.",
+        lbl_tasks_in_scene: "Generated Scene Tasks",
+        lbl_input_answer: "Answer to Verify:",
+        btn_validate: "Verify",
+        leaderboard_header_title: "Benchmark & Model Rankings",
+        leaderboard_header_desc: "Comparative evaluation results on official test splits across all 7 reasoning dimensions.",
+        btn_run_eval: "Run Live Evaluation",
+        radar_title: "7 Capabilities Radar",
+        ranking_table_title: "Official Leaderboard Table",
+        harbor_header_title: "Harbor Framework (v1.4) Export Hub",
+        harbor_header_desc: "Package the generated dataset into the official containerized benchmark specification.",
+        btn_gen_harbor: "Package Dataset (.zip)",
+        harbor_success_msg: "Harbor 1.4 Package Successfully Generated and Verified!",
+        btn_download_zip: "Download Competition ZIP Package",
+        profile_header_title: "Researcher Profile & System Settings",
+        profile_header_desc: "Manage your research credentials, API evaluation parameters, and workstation preferences.",
+        auth_login_title: "Sign In to Platform",
+        btn_back_home: "Back to Home",
+        lbl_name: "Full Name",
+        lbl_org: "Research Institution / Department",
+        lbl_email: "Institutional Email",
+        lbl_password: "Password",
+        btn_enter: "Sign In",
+        link_create_account: "Create researcher account",
+        link_demo_bypass: "Fast Demo Access →",
+        login_side_title: "Research Laboratory Access",
+        login_side_desc: "Access the enclosed visual simulation environment, pixel-derived Ground Truth auditing, and autonomous neural diagnostic agents."
+      },
+      pt: {
+        btn_enter_system: "Entrar no Sistema",
+        hero_pill: "Inteligência Autônoma e Benchmark de Infraestruturas",
+        landing_title: "O Padrão Científico de Benchmark para IA Multimodal em Rodovias",
+        landing_subtitle: "Transforme a inspeção de pavimentos numa ciência matematicamente verificável. Gere defeitos sintéticos com física controlada, extraia Ground Truth ao nível do píxel e avalie modelos com verificadores determinísticos sem vazamento de dados.",
+        btn_instant_demo: "Explorar Demonstração ao Vivo",
+        metric1_title: "Redução de Custos de Inspeção",
+        metric1_desc: "Substitui inspeções manuais a pé por benchmarking automatizado.",
+        metric2_title: "Precisão Determinística",
+        metric2_desc: "IoU matemático e geometria exata de píxeis sem viés de juízes LLM.",
+        metric3_title: "Dimensões Cognitivas",
+        metric3_desc: "Avalia Contagem, Topologia Espacial, Bounding Boxes e Abstenção Honesta.",
+        metric4_title: "Padrão Aberto Nativo",
+        metric4_desc: "Exportação em 1 clique pronta para submissão e avaliação em competições.",
+        cap_section_sub: "— Fábrica de Tarefas Visuais",
+        cap_section_title: "7 Dimensões de Raciocínio Visual em IA Multimodal",
+        cap_section_desc: "A maioria dos modelos alucina ou falha em testes espaciais. O RoadVision AI isola sistematicamente cada modo de falha através de Ground Truth determinístico.",
+        cap1_name: "Contagem e Densidade de Defeitos",
+        cap1_text: "Avalia se a IA conta múltiplos buracos e fissuras sem duplicar anomalias adjacentes.",
+        cap2_name: "Classificação de Severidade",
+        cap2_text: "Distingue crateras estruturais de desgaste superficial, fissuração em couro de crocodilo e remendos de asfalto.",
+        cap3_name: "Localização por Bounding Box",
+        cap3_text: "Avalia coordenadas normalizadas comparadas com máscaras de contorno exatas através de IoU.",
+        cap4_name: "Topologia e Relações Espaciais",
+        cap4_text: "Verifica orientação espacial relativa: determina se um defeito está à esquerda, direita, frente ou atrás de outros elementos.",
+        cap5_name: "Comparação de Área Métrica",
+        cap5_text: "Compara dimensões de anomalias em metros quadrados projetados no mundo físico.",
+        cap6_name: "Robustez a Oclusão e Clima",
+        cap6_text: "Testa modelos quando os defeitos estão parcialmente ocultos sob sombras de árvores, chuva forte ou detritos.",
+        cap7_name: "Suficiência de Evidência e Abstenção",
+        cap7_text: "Recompensa modelos que declaram explicitamente 'evidência insuficiente' em vez de inventar respostas sob baixa visibilidade.",
+        comp_sub: "— Superioridade Arquitetural",
+        comp_title: "Como o RoadVision AI se Compara às Alternativas",
+        comp_desc: "Por que benchmarks sintéticos procedurais resolvem o gargalo de anotação e vazamento de dados.",
+        ind_sub: "— Casos de Uso Empresariais",
+        ind_title: "Construído para Líderes em 3 Setores Principais",
+        sidebar_section: "Módulos de Engenharia",
+        mod_agent: "Agente Neural Multimodal",
+        mod_studio: "Studio de Criação",
+        mod_audit: "Auditoria Ground Truth",
+        mod_arena: "Validation Arena",
+        mod_leaderboard: "Benchmark & Ranking",
+        mod_harbor: "Harbor Export Hub",
+        mod_profile: "Perfil do Pesquisador",
+        btn_signout: "Sair",
+        agent_header_title: "Agente de IA Multimodal — Diagnóstico Rodoviário",
+        agent_header_desc: "Envie uma foto de qualquer rodovia ou utilize o gerador para o agente analisar defeitos, calcular severidade e recomendar manutenções.",
+        agent_upload_box: "Carregar Foto para o Agente",
+        agent_dropzone_text: "Clique para carregar uma imagem (PNG/JPG)",
+        agent_dropzone_sub: "Ou analise a imagem gerada no laboratório",
+        agent_query_lbl: "Pergunta ou Instrução de Análise:",
+        btn_ask_agent: "Executar Análise com o Agente",
+        agent_result_title: "Parecer Técnico do Agente Neural",
+        studio_header_title: "Studio de Criação Procedural de Pavimentos",
+        studio_header_desc: "Gere estradas sintéticas com controle de textura de asfalto, defeitos, poças de chuva, iluminação solar e oclusores.",
+        btn_rand_seed: "Nova Semente Aleatória",
+        btn_render_scene: "Renderizar Cena",
+        lbl_input_parameters: "Controles de Criação",
+        lbl_seed: "Semente RNG (Seed)",
+        lbl_config: "Configuração do Benchmark",
+        lbl_env_status: "Física & Estado da Cena",
+        lbl_weather: "Clima:",
+        lbl_lighting: "Iluminação:",
+        lbl_shadow: "Sombras:",
+        lbl_occluder: "Oclusores:",
+        lbl_inspect_layers: "Inspecionar Camadas Visuais:",
+        layer_rgb: "Foto RGB",
+        layer_instances: "Instâncias",
+        layer_visible: "Visibilidade",
+        layer_occluders: "Oclusores",
+        layer_boxes: "📦 BBoxes",
+        audit_header_title: "Auditoria Matemática de Ground Truth",
+        audit_header_desc: "Inspeção detalhada de dimensões, máscaras indexadas e validações Pydantic.",
+        btn_export_json: "Exportar JSON",
+        tbl_objects_title: "Tabela de Objetos & Coordenadas Ground Truth",
+        th_class: "Classe",
+        th_area: "Área (px)",
+        th_visible: "Visível (px)",
+        th_status: "Status Oclusão",
+        arena_header_title: "Arena de Validação Determinística",
+        arena_header_desc: "Submeta respostas para testar os algoritmos de validação determinística sem juízes de IA.",
+        lbl_tasks_in_scene: "Tarefas Geradas na Cena",
+        lbl_input_answer: "Resposta para Verificação:",
+        btn_validate: "Validar",
+        leaderboard_header_title: "Benchmark & Classificação de Modelos",
+        leaderboard_header_desc: "Resultados comparativos no conjunto oficial de avaliação em todas as 7 dimensões cognitivas.",
+        btn_run_eval: "Executar Avaliação ao Vivo",
+        radar_title: "Radar das 7 Capacidades",
+        ranking_table_title: "Tabela Oficial de Classificação",
+        harbor_header_title: "Harbor Framework (v1.4) Export Hub",
+        harbor_header_desc: "Empacotamento oficial de tarefas para submissão direta no repositório da competição.",
+        btn_gen_harbor: "Empacotar Dataset (.zip)",
+        harbor_success_msg: "Pacote Harbor 1.4 Gerado e Validado com Sucesso!",
+        btn_download_zip: "Transferir Arquivo ZIP da Competição",
+        profile_header_title: "Perfil do Pesquisador & Configurações da Conta",
+        profile_header_desc: "Gerencie suas credenciais de pesquisa, credenciais de API para avaliação e preferências da plataforma.",
+        auth_login_title: "Entrar na Plataforma",
+        btn_back_home: "Voltar para o Início",
+        lbl_name: "Nome Completo",
+        lbl_org: "Instituição de Pesquisa / Departamento",
+        lbl_email: "E-mail Institucional",
+        lbl_password: "Palavra-passe",
+        btn_enter: "Entrar",
+        link_create_account: "Criar conta de pesquisador",
+        link_demo_bypass: "Acesso Rápido de Teste →",
+        login_side_title: "Ambiente de Pesquisa de Pavimentos Rodoviários",
+        login_side_desc: "Aceda ao ambiente fechado de simulação visual, análise de Ground Truth e execução do agente neural de diagnóstico."
+      },
+      hi: {
+        btn_enter_system: "सिस्टम में प्रवेश करें",
+        hero_pill: "उन्नत सड़क अवसंरचना तर्क एवं बेंचमार्क मंच",
+        landing_title: "सड़क अवसंरचना में मल्टीमॉडल AI के लिए वैज्ञानिक बेंचमार्क",
+        landing_subtitle: "सड़क फुटपाथ निरीक्षण को एक गणितीय रूप से सत्यापन योग्य विज्ञान में बदलें। भौतिकी-नियंत्रित सिंथेटिक दोष उत्पन्न करें।",
+        btn_instant_demo: "लाइव प्रदर्शन देखें",
+        metric1_title: "सर्वेक्षण लागत में कमी",
+        metric1_desc: "मैनुअल सर्वेक्षणों को स्वचालित प्रक्रियात्मक बेंचमार्किंग से बदलता है।",
+        metric2_title: "सटीक निर्धारक शुद्धता",
+        metric2_desc: "शून्य LLM पूर्वाग्रह के साथ गणितीय IoU और सटीक पिक्सेल ज्यामिति।",
+        metric3_title: "7 संज्ञानात्मक आयाम",
+        metric3_desc: "गिनती, स्थानिक स्थिति, बाउंडिंग बॉक्स और परहेज का मूल्यांकन करता है।",
+        metric4_title: "हार्बर 1.4 ओपन स्टैंडर्ड",
+        metric4_desc: "सीधे सबमिशन और मूल्यांकन के लिए 1-क्लिक निर्यात तैयार।",
+        cap_section_sub: "— विजुअल टास्क फैक्ट्री",
+        cap_section_title: "मल्टीमॉडल AI में विजुअल रीजनिंग के 7 आयाम",
+        cap_section_desc: "अधिकांश विजन मॉडल भ्रमित होते हैं। RoadVision AI प्रत्येक विफलता को अलग करता है।",
+        cap1_name: "दोष गणना और घनत्व",
+        cap1_text: "सटीक गिनती का परीक्षण करता है।",
+        cap2_name: "गंभीरता वर्गीकरण",
+        cap2_text: "सतही दरारों से गहरे गड्ढों को अलग करता है।",
+        cap3_name: "बाउंडिंग बॉक्स स्थानीयकरण",
+        cap3_text: "सटीक पिक्सेल मास्क के विरुद्ध सामान्यीकृत निर्देशांक का मूल्यांकन करता है।",
+        cap4_name: "स्थानिक संबंध तर्क",
+        cap4_text: "सड़क की विशेषताओं के सापेक्ष स्थिति का सत्यापन करता है।",
+        cap5_name: "क्षेत्रफल और मीट्रिक तुलना",
+        cap5_text: "वास्तविक वर्ग मीटर में विसंगतियों के आकार की सीधे तुलना करता है।",
+        cap6_name: "अवरोध और मौसम मजबूती",
+        cap6_text: "छाया और बारिश के नीचे आंशिक रूप से छिपे दोषों का परीक्षण करता है।",
+        cap7_name: "साक्ष्य पर्याप्तता और परहेज",
+        cap7_text: "अस्पष्ट स्थिति में उत्तर गढ़ने के बजाय परहेज करने वाले मॉडलों को पुरस्कृत करता है।",
+        comp_sub: "— वास्तुकला श्रेष्ठता",
+        comp_title: "RoadVision AI विकल्पों की तुलना में कैसे बेहतर है",
+        comp_desc: "सिंथेटिक प्रक्रियात्मक बेंचमार्क डेटा रिसाव को हल करते हैं।",
+        ind_sub: "— उद्यम अनुप्रयोग",
+        ind_title: "3 प्रमुख क्षेत्रों में उद्योग जगत के लिए निर्मित",
+        sidebar_section: "इंजीनियरिंग मॉड्यूल",
+        mod_agent: "मल्टीमॉडल न्यूरल एजेंट",
+        mod_studio: "सृजन स्टूडियो",
+        mod_audit: "ग्राउंड ट्रुथ ऑडिट",
+        mod_arena: "सत्यापन अखाड़ा",
+        mod_leaderboard: "बेंचमार्क और रैंकिंग",
+        mod_harbor: "हार्बर निर्यात हब",
+        mod_profile: "शोधकर्ता प्रोफाइल",
+        btn_signout: "लॉग आउट",
+        agent_header_title: "मल्टीमॉडल AI एजेंट — सड़क निदान",
+        agent_header_desc: "दोषों का विश्लेषण करने के लिए सड़क की तस्वीर भेजें।",
+        agent_upload_box: "निरीक्षण हेतु फोटो अपलोड करें",
+        agent_dropzone_text: "छवि अपलोड करने के लिए क्लिक करें",
+        agent_dropzone_sub: "या स्टूडियो में बनाई गई छवि का विश्लेषण करें",
+        agent_query_lbl: "प्रश्न या निर्देश:",
+        btn_ask_agent: "एजेंट द्वारा विश्लेषण करें",
+        agent_result_title: "न्यूरल एजेंट तकनीकी रिपोर्ट",
+        studio_header_title: "सड़क सतह सृजन स्टूडियो",
+        studio_header_desc: "मौसम, प्रकाश और दोषों के साथ सिंथेटिक सड़कें बनाएं।",
+        btn_rand_seed: "नया यादृच्छिक सीड",
+        btn_render_scene: "दृश्य तैयार करें",
+        lbl_input_parameters: "सृजन नियंत्रण",
+        lbl_seed: "RNG मास्टर सीड",
+        lbl_config: "बेंचमार्क विन्यास",
+        lbl_env_status: "दृश्य भौतिकी एवं स्थिति",
+        lbl_weather: "मौसम:",
+        lbl_lighting: "प्रकाश:",
+        lbl_shadow: "छाया:",
+        lbl_occluder: "अवरोधक:",
+        lbl_inspect_layers: "दृश्य परतों का निरीक्षण:",
+        layer_rgb: "RGB फोटो",
+        layer_instances: "वस्तुएं",
+        layer_visible: "दृश्यता",
+        layer_occluders: "अवरोधक",
+        layer_boxes: "📦 BBoxes",
+        audit_header_title: "ग्राउंड ट्रुथ ऑडिट",
+        audit_header_desc: "पिक्सेल मास्क से गणना किए गए मेटाडेटा का निरीक्षण।",
+        btn_export_json: "JSON निर्यात करें",
+        tbl_objects_title: "वस्तुएं एवं निर्देशांक तालिका",
+        th_class: "वर्ग",
+        th_area: "क्षेत्रफल (px)",
+        th_visible: "दृश्यमान (px)",
+        th_status: "अवरोध स्थिति",
+        arena_header_title: "सत्यापन अखाड़ा",
+        arena_header_desc: "सत्यापनकर्ताओं का परीक्षण करने के लिए उत्तर सबमिट करें।",
+        lbl_tasks_in_scene: "उत्पन्न किए गए कार्य",
+        lbl_input_answer: "सत्यापन हेतु उत्तर:",
+        btn_validate: "सत्यापित करें",
+        leaderboard_header_title: "मॉडल बेंचमार्क एवं रैंकिंग",
+        leaderboard_header_desc: "तुलनात्मक मूल्यांकन परिणाम।",
+        btn_run_eval: "लाइव मूल्यांकन चलाएं",
+        radar_title: "7 क्षमताओं का रडार",
+        ranking_table_title: "आधिकारिक तालिका",
+        harbor_header_title: "हार्बर फ्रेमवर्क निर्यात",
+        harbor_header_desc: "प्रतियोगिता रिपॉजिटरी में सीधे सबमिशन के लिए पैकेज।",
+        btn_gen_harbor: "डेटासेट पैकेज बनाएं (.zip)",
+        harbor_success_msg: "हार्बर पैकेज सफलतापूर्वक तैयार!",
+        btn_download_zip: "प्रतियोगिता ZIP फ़ाइल डाउनलोड करें",
+        profile_header_title: "शोधकर्ता प्रोफाइल",
+        profile_header_desc: "अपनी साख और सेटिंग्स प्रबंधित करें।",
+        auth_login_title: "प्लेटफ़ॉर्म में प्रवेश करें",
+        btn_back_home: "वापस जाएं",
+        lbl_name: "पूरा नाम",
+        lbl_org: "शोध संस्थान",
+        lbl_email: "संस्थागत ईमेल",
+        lbl_password: "पासवर्ड",
+        btn_enter: "प्रवेश करें",
+        link_create_account: "खाता बनाएं",
+        link_demo_bypass: "त्वरित परीक्षण पहुंच →",
+        login_side_title: "अनुसंधान प्रयोगशाला प्रवेश",
+        login_side_desc: "ग्राउंड ट्रुथ और स्वायत्त एजेंटों तक पहुंच प्राप्त करें।"
+      }
+    };
+
+    let currentLang = 'en'; // DEFAULT IS ENGLISH
+    let currentUser = null;
+    let currentSceneData = null;
+    let activeTask = null;
+    let activeLayer = 'rgb';
+    let showBoxes = false;
+    let radarChartInstance = null;
+    let isRegisterMode = false;
+
+    // Language switcher
+    function setLanguage(lang) {
+      if (!I18N[lang]) return;
+      currentLang = lang;
+      
+      ['en', 'pt', 'hi'].forEach(l => {
+        const btn = document.getElementById(`lang-${l}`);
+        if (btn) {
+          if (l === lang) {
+            btn.className = 'px-2.5 py-1 rounded transition bg-white text-ms-text shadow-xs font-bold';
+          } else {
+            btn.className = 'px-2.5 py-1 rounded transition text-ms-textSecondary hover:text-ms-text';
+          }
+        }
+      });
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (I18N[lang][key]) {
+          el.innerText = I18N[lang][key];
+        }
+      });
+
+      localStorage.setItem('rv_lang', lang);
+    }
+
+    // High Level Views: 'landing', 'login', 'workspace'
+    function showView(viewName) {
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
+
+      const globalHeader = document.getElementById('globalHeader');
+
+      if (viewName === 'landing') {
+        if (globalHeader) globalHeader.classList.remove('hidden');
+        document.getElementById('view-landing').classList.remove('hidden');
+        document.getElementById('publicHeaderBtn').classList.remove('hidden');
+        document.getElementById('userHeaderBadge').classList.add('hidden');
+      } else if (viewName === 'login') {
+        // In dedicated login screen, completely hide top header
+        if (globalHeader) globalHeader.classList.add('hidden');
+        document.getElementById('view-login').classList.remove('hidden');
+        document.getElementById('view-login').classList.add('flex');
+        document.getElementById('publicHeaderBtn').classList.remove('hidden');
+        document.getElementById('userHeaderBadge').classList.add('hidden');
+      } else if (viewName === 'workspace') {
+        if (globalHeader) globalHeader.classList.remove('hidden');
+        document.getElementById('view-workspace').classList.remove('hidden');
+        document.getElementById('view-workspace').classList.add('flex');
+        document.getElementById('publicHeaderBtn').classList.add('hidden');
+        document.getElementById('userHeaderBadge').classList.remove('hidden');
+        document.getElementById('userHeaderBadge').classList.add('flex');
+
+        if (!currentSceneData) {
+          triggerGenerate();
+        }
+      }
+    }
+
+    // Workspace Sidebar Modules
+    function showWorkspaceModule(modName) {
+      document.querySelectorAll('.module-pane').forEach(m => m.classList.add('hidden'));
+      document.querySelectorAll('.sidebar-item').forEach(btn => {
+        btn.classList.remove('bg-ms-sidebarHover', 'border-l-3', 'border-ms-activeBorder', 'text-ms-blue', 'font-bold');
+      });
+
+      const targetPane = document.getElementById(`module-${modName}`);
+      if (targetPane) targetPane.classList.remove('hidden');
+
+      const activeBtn = document.querySelector(`.sidebar-item[data-mod="${modName}"]`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-ms-sidebarHover', 'border-l-3', 'border-ms-activeBorder', 'text-ms-blue', 'font-bold');
+      }
+
+      if (modName === 'leaderboard') renderRadarChart();
+    }
+
+    // Authentication Handlers
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      const grp = document.getElementById('registerFieldGroup');
+      const title = document.getElementById('authTitle');
+      const btn = document.getElementById('btnSubmitAuth');
+      const link = document.getElementById('btnToggleAuthMode');
+
+      if (isRegisterMode) {
+        grp.classList.remove('hidden');
+        title.innerText = currentLang === 'hi' ? 'शोधकर्ता खाता पंजीकरण' : (currentLang === 'pt' ? 'Criar Conta de Pesquisador' : 'Register Researcher Account');
+        btn.innerText = currentLang === 'hi' ? 'पंजीकरण करें' : (currentLang === 'pt' ? 'Criar Conta' : 'Register Account');
+        link.innerText = currentLang === 'hi' ? 'पहले से खाता है? साइन इन करें' : (currentLang === 'pt' ? 'Já tem conta? Iniciar Sessão' : 'Already have an account? Sign in');
+      } else {
+        grp.classList.add('hidden');
+        title.innerText = I18N[currentLang].auth_login_title;
+        btn.innerText = I18N[currentLang].btn_enter;
+        link.innerText = I18N[currentLang].link_create_account;
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('inputEmail').value;
+      const pass = document.getElementById('inputPassword').value;
+
+      try {
+        const resp = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: pass })
+        });
+        if (!resp.ok) throw new Error('Invalid credentials');
+        const data = await resp.json();
+        setLoggedInUser(data.user);
+      } catch (err) {
+        alert('Authentication Error: ' + err.message);
+      }
+    }
+
+    function directAccessDemo() {
+      setLoggedInUser({
+        name: "Lead AI Researcher",
+        email: "lead@roadvision.ai",
+        role: "admin",
+        organization: "RoadVision AI Research Core"
+      });
+    }
+
+    function setLoggedInUser(user) {
+      currentUser = user;
+      document.getElementById('headerUserName').innerText = user.name;
+      document.getElementById('headerUserEmail').innerText = user.email;
+      document.getElementById('avatarInitial').innerText = user.name[0].toUpperCase();
+
+      document.getElementById('profileFullName').innerText = user.name;
+      document.getElementById('profileEmailTxt').innerText = user.email;
+      document.getElementById('profileOrgTxt').innerText = user.organization || "RoadVision Lab";
+      document.getElementById('profileLargeAvatar').innerText = user.name[0].toUpperCase();
+
+      showView('workspace');
+      showWorkspaceModule('studio'); // Open Creation Studio by default so the user sees it immediately!
+    }
+
+    function logout() {
+      currentUser = null;
+      showView('landing');
+    }
+
+    // Multimodal Neural Agent
+    function handleAgentFileSelected(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('agentPreviewImg').src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function submitAgentAnalysis() {
+      const q = document.getElementById('agentQueryInput').value.trim() || "Provide a rigorous structural assessment of pavement defects.";
+      const fileInput = document.getElementById('agentFileInput');
+      const btn = document.getElementById('btnSubmitAgent');
+      
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-1"></i>Running OpenCV Analysis...';
+      btn.disabled = true;
+
+      try {
+        let resp;
+        if (fileInput.files.length > 0) {
+          const fd = new FormData();
+          fd.append('file', fileInput.files[0]);
+          fd.append('question', q);
+          resp = await fetch('/api/agent/upload-analyze', { method: 'POST', body: fd });
+        } else {
+          resp = await fetch('/api/agent/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: q, image_id: currentSceneData ? currentSceneData.image_id : "RV_010452_56ac55" })
+          });
+        }
+        const data = await resp.json();
+        
+        document.getElementById('agentResponseText').innerText = `"${data.answer}"`;
+        if (data.annotated_image_base64) {
+          document.getElementById('agentPreviewImg').src = data.annotated_image_base64;
+        }
+      } catch (err) {
+        alert('Agent Error: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-robot mr-1"></i>' + I18N[currentLang].btn_ask_agent;
+        btn.disabled = false;
+      }
+    }
+
+    // Studio & Generation
+    function randomizeSeed() {
+      const newSeed = Math.floor(Math.random() * 90000) + 10000;
+      document.getElementById('genSeed').value = newSeed;
+      triggerGenerate();
+    }
+
+    function onConfigChanged() {
+      const cfg = document.getElementById('genConfig').value;
+      const sbDataset = document.getElementById('sidebarActiveDataset');
+      if (sbDataset) sbDataset.innerText = `${cfg}.yaml`;
+      triggerGenerate();
+    }
+
+    async function triggerGenerate() {
+      const seed = parseInt(document.getElementById('genSeed').value, 10);
+      const configName = document.getElementById('genConfig').value;
+      const weather = document.getElementById('genWeather') ? document.getElementById('genWeather').value : 'wet';
+      const lighting = document.getElementById('genLighting') ? document.getElementById('genLighting').value : 'harsh';
+
+      const btn = document.getElementById('btnGenerate');
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-1"></i>Rendering...';
+      btn.disabled = true;
+
+      const sbSeed = document.getElementById('sidebarActiveSeed');
+      if (sbSeed) sbSeed.innerText = seed;
+
+      try {
+        const resp = await fetch('/api/studio/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ seed, config_name: configName, weather, lighting })
+        });
+        const data = await resp.json();
+        currentSceneData = data;
+        renderSceneData();
+      } catch (err) {
+        console.error("Generate error:", err);
+        alert('Generation Error: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i>' + I18N[currentLang].btn_render_scene;
+        btn.disabled = false;
+      }
+    }
+
+    function renderSceneData() {
+      if (!currentSceneData) return;
+      const d = currentSceneData;
+
+      // Update main canvas image & Agent preview
+      document.getElementById('mainImageDisplay').src = d.image_base64;
+      const agentPreview = document.getElementById('agentPreviewImg');
+      if (agentPreview) agentPreview.src = d.image_base64;
+
+      document.getElementById('currentImageId').innerText = d.image_id;
+      document.getElementById('currentDefectsCount').innerText = d.defects_count;
+      document.getElementById('currentRenderTime').innerText = `${d.elapsed_seconds.toFixed(2)}s`;
+
+      // Update Environmental Physics Telemetry
+      document.getElementById('infoWeather').innerText = d.scene.weather.toUpperCase();
+      document.getElementById('infoLighting').innerText = d.scene.lighting.toUpperCase();
+      document.getElementById('infoShadow').innerText = d.scene.shadow_present ? 'PRESENT' : 'NONE';
+      document.getElementById('infoOccluder').innerText = d.occluders.length > 0 ? d.occluders[0].type.replace('_', ' ').toUpperCase() : 'NONE';
+
+      // Objects Table in Audit
+      const tbody = document.getElementById('objectsTableBody');
+      tbody.innerHTML = '';
+      d.objects.forEach(obj => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-ms-bg';
+        tr.innerHTML = `
+          <td class="p-2.5 font-bold text-ms-blue">${obj.id}</td>
+          <td class="p-2.5 font-sans capitalize font-semibold">${obj.type.replace('_', ' ')}</td>
+          <td class="p-2.5 font-mono text-[11px]">[${obj.bbox_normalized.map(v => v.toFixed(3)).join(', ')}]</td>
+          <td class="p-2.5">${obj.area_px.toLocaleString()} px</td>
+          <td class="p-2.5">${obj.visible_area_px.toLocaleString()} px</td>
+          <td class="p-2.5 font-bold text-emerald-700">${(obj.visible_fraction * 100).toFixed(1)}%</td>
+          <td class="p-2.5 font-sans text-xs">${obj.occluded ? '<span class="text-amber-600 font-semibold">Partial</span>' : '<span class="text-emerald-600 font-semibold">Fully Visible</span>'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Tasks List in Arena
+      renderTasksList();
+
+      // Reset BBoxes state
+      if (showBoxes) {
+        showBoxes = false;
+        toggleBoundingBoxes();
+      }
+    }
+
+    function setInspectLayer(layer) {
+      activeLayer = layer;
+      ['rgb', 'instances', 'visible', 'occluders'].forEach(l => {
+        const b = document.getElementById(`layerBtn_${l}`);
+        if (b) {
+          if (l === layer) {
+            b.className = 'px-2.5 py-1 rounded font-semibold transition bg-white text-ms-text shadow-2xs';
+          } else {
+            b.className = 'px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text';
+          }
+        }
+      });
+
+      if (!currentSceneData) return;
+      const d = currentSceneData;
+      const img = document.getElementById('mainImageDisplay');
+
+      if (layer === 'rgb') {
+        img.src = d.image_base64;
+      } else if (layer === 'instances') {
+        if (d.masks_base64 && d.masks_base64.instances) {
+          img.src = d.masks_base64.instances;
+        } else {
+          img.src = `/api/studio/mask/${document.getElementById('genConfig').value}/${d.image_id}/instances`;
+        }
+      } else if (layer === 'visible') {
+        if (d.masks_base64 && d.masks_base64.visible) {
+          img.src = d.masks_base64.visible;
+        } else {
+          img.src = `/api/studio/mask/${document.getElementById('genConfig').value}/${d.image_id}/visible`;
+        }
+      } else if (layer === 'occluders') {
+        if (d.masks_base64 && d.masks_base64.occluders) {
+          img.src = d.masks_base64.occluders;
+        } else {
+          img.src = `/api/studio/mask/${document.getElementById('genConfig').value}/${d.image_id}/occluders`;
+        }
+      }
+    }
+
+    function toggleBoundingBoxes() {
+      showBoxes = !showBoxes;
+      const btn = document.getElementById('btnToggleBBoxes');
+      if (showBoxes) {
+        btn.className = 'px-2.5 py-1 rounded font-semibold transition bg-emerald-700 text-white shadow-2xs';
+        btn.innerText = "✓ BBoxes Active";
+      } else {
+        btn.className = 'px-2.5 py-1 rounded font-semibold transition text-ms-textSecondary hover:text-ms-text';
+        btn.innerText = "📦 BBoxes";
+      }
+
+      const overlay = document.getElementById('imageOverlayBBoxes');
+      overlay.innerHTML = '';
+      if (!showBoxes || !currentSceneData) return;
+
+      currentSceneData.objects.forEach(obj => {
+        const [ymin, xmin, ymax, xmax] = obj.bbox_normalized;
+        const div = document.createElement('div');
+        div.className = 'absolute border-2 border-emerald-500 bg-emerald-500/15 pointer-events-none';
+        div.style.top = `${ymin * 100}%`;
+        div.style.left = `${xmin * 100}%`;
+        div.style.width = `${(xmax - xmin) * 100}%`;
+        div.style.height = `${(ymax - ymin) * 100}%`;
+
+        const badge = document.createElement('span');
+        badge.className = 'absolute -top-4 left-0 bg-emerald-700 text-white text-[9px] font-mono px-1 rounded shadow-xs';
+        badge.innerText = `${obj.type} #${obj.id}`;
+        div.appendChild(badge);
+
+        overlay.appendChild(div);
+      });
+    }
+
+    function renderTasksList() {
+      const container = document.getElementById('tasksContainer');
+      container.innerHTML = '';
+      if (!currentSceneData || !currentSceneData.tasks) return;
+
+      const badge = document.getElementById('tasksCountBadge');
+      if (badge) badge.innerText = `${currentSceneData.tasks.length} tasks`;
+
+      currentSceneData.tasks.forEach((t, idx) => {
+        const div = document.createElement('div');
+        div.className = 'p-3 rounded border border-ms-border hover:border-ms-blue cursor-pointer transition bg-ms-bg';
+        div.onclick = () => selectTaskForValidation(t);
+        div.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-white border border-ms-border text-ms-blue font-bold">${t.capability}</span>
+            <span class="text-[10px] font-mono font-semibold text-slate-500">${t.task_id}</span>
+          </div>
+          <p class="font-semibold text-ms-text leading-snug text-xs">${t.question}</p>
+        `;
+        container.appendChild(div);
+      });
+
+      if (currentSceneData.tasks.length > 0) {
+        selectTaskForValidation(currentSceneData.tasks[0]);
+      }
+    }
+
+    function selectTaskForValidation(task) {
+      activeTask = task;
+      document.getElementById('arenaTaskId').innerText = task.task_id;
+      document.getElementById('arenaCapability').innerText = `Capability: ${task.capability.toUpperCase()}`;
+      document.getElementById('arenaQuestionText').innerText = task.question;
+      document.getElementById('arenaExpectedAnswer').innerText = JSON.stringify(task.ground_truth_answer);
+      document.getElementById('validationResultCard').classList.add('hidden');
+      document.getElementById('arenaAnswerInput').value = '';
+    }
+
+    async function submitTaskValidation() {
+      if (!activeTask) return;
+      const ans = document.getElementById('arenaAnswerInput').value.trim();
+      if (!ans) {
+        alert('Please enter an answer to verify.');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/benchmark/validate-task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task_id: activeTask.task_id, dataset: document.getElementById('genConfig').value, answer: ans })
+        });
+        const res = await resp.json();
+        const card = document.getElementById('validationResultCard');
+        card.classList.remove('hidden');
+
+        if (res.correct) {
+          card.className = 'p-3 rounded border border-emerald-500/40 bg-emerald-50 text-xs space-y-1';
+          card.innerHTML = `
+            <div class="flex items-center space-x-1.5 text-emerald-700 font-bold">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Verified: Correct Answer (Score: ${res.score.toFixed(1)} / 1.0)</span>
+            </div>
+            <p class="text-ms-textSecondary">Verification Mode: <code class="font-mono text-ms-blue">${res.mode}</code> | Parsed Output: <strong class="text-ms-text">${JSON.stringify(res.parsed_answer)}</strong></p>
+          `;
+        } else {
+          card.className = 'p-3 rounded border border-rose-500/40 bg-rose-50 text-xs space-y-1';
+          card.innerHTML = `
+            <div class="flex items-center space-x-1.5 text-rose-700 font-bold">
+              <i class="fa-solid fa-circle-xmark"></i>
+              <span>Verified: Incorrect (Score: 0.0)</span>
+            </div>
+            <p class="text-ms-textSecondary">Verification Mode: <code class="font-mono text-ms-blue">${res.mode}</code> | Parsed Output: <strong class="text-ms-text">${JSON.stringify(res.parsed_answer)}</strong></p>
+          `;
+        }
+      } catch (err) {
+        alert('Validation error: ' + err.message);
+      }
+    }
+
+    async function loadLeaderboard() {
+      try {
+        const resp = await fetch('/api/benchmark/leaderboard');
+        const list = await resp.json();
+        const tbody = document.getElementById('leaderboardTableBody');
+        tbody.innerHTML = '';
+        list.forEach(m => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-ms-bg';
+          tr.innerHTML = `
+            <td class="p-2.5 font-bold text-ms-blue">#${m.rank}</td>
+            <td class="p-2.5 font-sans font-bold text-ms-text">${m.model}</td>
+            <td class="p-2.5 font-bold text-ms-blue">${(m.overall_accuracy * 100).toFixed(1)}%</td>
+            <td class="p-2.5">${(m.counting_acc * 100).toFixed(1)}%</td>
+            <td class="p-2.5">${m.localization_iou.toFixed(3)}</td>
+            <td class="p-2.5">${(m.occlusion_robustness * 100).toFixed(1)}%</td>
+            <td class="p-2.5">${(m.abstention_f1 * 100).toFixed(1)}%</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderRadarChart() {
+      if (radarChartInstance) return;
+      const ctx = document.getElementById('radarChart');
+      if (!ctx) return;
+
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Counting', 'Classification', 'Localization', 'Spatial', 'Area Comp', 'Occlusion', 'Abstention'],
+          datasets: [
+            {
+              label: 'RoadVision SOTA Model',
+              data: [91, 95, 78, 86, 88, 82, 87],
+              borderColor: '#0078d4',
+              backgroundColor: 'rgba(0, 120, 212, 0.15)',
+              borderWidth: 2,
+            },
+            {
+              label: 'Foundation VLM (90B)',
+              data: [82, 89, 70, 81, 84, 68, 77],
+              borderColor: '#107c41',
+              backgroundColor: 'rgba(16, 124, 65, 0.1)',
+              borderWidth: 2,
+            },
+            {
+              label: 'Commercial VLM (Omni)',
+              data: [74, 82, 59, 75, 76, 54, 69],
+              borderColor: '#5c2d91',
+              backgroundColor: 'rgba(92, 45, 145, 0.1)',
+              borderWidth: 1.5,
+            }
+          ]
+        },
+        options: {
+          scales: {
+            r: {
+              angleLines: { color: '#e1dfdd' },
+              grid: { color: '#edebe9' },
+              pointLabels: { color: '#605e5c', font: { size: 10, family: 'Segoe UI' } },
+              ticks: { display: false }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: '#323130', font: { size: 11, family: 'Segoe UI' } } }
+          }
+        }
+      });
+    }
+
+    async function runLiveEvaluation() {
+      const btn = document.getElementById('btnRunEval');
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-1"></i>Evaluating Benchmark...';
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch('/api/benchmark/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataset_name: 'smoke', provider_type: 'mock', model_name: 'roadvision-sota-simulated' })
+        });
+        const res = await resp.json();
+        alert(`Evaluation Finished!
+
+Model Tested: ${res.model_name}
+Overall Accuracy: ${(res.accuracy * 100).toFixed(1)}%
+Verified Tasks: ${res.correct_tasks} / ${res.total_tasks}`);
+        loadLeaderboard();
+      } catch (err) {
+        alert('Evaluation Error: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i>' + I18N[currentLang].btn_run_eval;
+        btn.disabled = false;
+      }
+    }
+
+    async function triggerHarborExport() {
+      const btn = document.getElementById('btnHarborExport');
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-1"></i>Packaging Harbor Zip...';
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch('/api/harbor/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataset_name: 'smoke' })
+        });
+        const res = await resp.json();
+        document.getElementById('harborResultCard').classList.remove('hidden');
+        document.getElementById('harborExportSummary').innerText = `Successfully exported ${res.tasks_exported} tasks conforming to Harbor Specification ${res.harbor_schema}.`;
+        document.getElementById('harborDownloadLink').href = res.download_url;
+      } catch (err) {
+        alert('Harbor Export Error: ' + err.message);
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-file-zipper mr-1"></i>' + I18N[currentLang].btn_gen_harbor;
+        btn.disabled = false;
+      }
+    }
+
+    function downloadSceneImage() {
+      if (!currentSceneData) return;
+      const a = document.createElement('a');
+      a.href = currentSceneData.image_base64;
+      a.download = `${currentSceneData.image_id}.png`;
+      a.click();
+    }
+
+    function downloadAnnotationJson() {
+      if (!currentSceneData) return;
+      const blob = new Blob([JSON.stringify(currentSceneData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentSceneData.image_id}_ground_truth.json`;
+      a.click();
+    }
+
+    function saveApiSettings() {
+      const key = document.getElementById('userApiKeyInput').value.trim();
+      const endpoint = document.getElementById('userEndpointInput').value.trim();
+      localStorage.setItem('rv_api_key', key);
+      localStorage.setItem('rv_endpoint', endpoint);
+      alert('Preferences saved successfully!');
+    }
+
+    // Init logic
+    window.onload = () => {
+      const savedLang = localStorage.getItem('rv_lang') || 'en';
+      setLanguage(savedLang);
+      loadLeaderboard();
+      showView('landing');
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+dataset:
+  name: dev
+  split: dev
+  seed_start: 20000
+  num_images: 32
+  family_block: 4
+
+render:
+  width: 768
+  height: 512
+  perspective_strength: 0.55
+  grain_sigma: 2.2
+  blur_sigma: 0.35
+  vignette: 0.12
+
+defects:
+  count_min: 2
+  count_max: 5
+  class_weights:
+    pothole: 0.34
+    crack: 0.28
+    alligator_crack: 0.20
+    patch: 0.18
+  guarantee_classes: [pothole, crack]
+  size_scale: 1.0
+
+environment:
+  weather: [dry, damp, wet]
+  lighting: [overcast, golden, harsh]
+  shadow_probability: 0.50
+  strong_shadow_probability: 0.35
+  wet_puddle_strength: 0.55
+
+occlusion:
+  enabled: true
+  probability: 0.50
+  severe_share: 0.35
+  types: [debris_sheet, cardboard, leaf_litter]
+
+questions:
+  capabilities:
+    - counting
+    - classification
+    - localization
+    - spatial_relation
+    - area_comparison
+    - occlusion
+    - evidence_sufficiency
+  max_per_image: 7
+  min_questions: 3
+  include_abstention_controls: true
